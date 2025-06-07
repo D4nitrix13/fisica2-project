@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Simbología de la Ley de Lorentz</title>
+    <!-- Reemplaza latex.js por KaTeX para renderizar matemáticas en línea -->
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: #f9f9f9;
+        }
+
+        h1 {
+            color: #2c3e50;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #ffffff;
+        }
+
+        th,
+        td {
+            border: 1px solid #bdc3c7;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #ecf0f1;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .equation {
+            margin-top: 20px;
+            font-size: 1.2em;
+            background-color: #ffffff;
+            padding: 15px;
+            border: 1px solid #bdc3c7;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Simbología de la Ley de Lorentz</h1>
+
+    <table>
+        <tr>
+            <th>Símbolo</th>
+            <th>Significado</th>
+            <th>Unidad (SI)</th>
+            <th>Descripción</th>
+        </tr>
+        <tr>
+            <td><span id="f-latex"></span></td>
+            <td>Fuerza de Lorentz</td>
+            <td>Newton (N)</td>
+            <td>Fuerza total sobre una carga en presencia de campos eléctrico y magnético.</td>
+        </tr>
+        <tr>
+            <td><span id="q-latex"></span></td>
+            <td>Carga eléctrica</td>
+            <td>Coulomb (C)</td>
+            <td>Valor de la carga puntual que experimenta la fuerza.</td>
+        </tr>
+        <tr>
+            <td><span id="e-latex"></span></td>
+            <td>Campo eléctrico</td>
+            <td>Voltio/metro (V/m)</td>
+            <td>Campo que ejerce fuerza sobre cargas eléctricas, independiente de su movimiento.</td>
+        </tr>
+        <tr>
+            <td><span id="b-latex"></span></td>
+            <td>Campo magnético</td>
+            <td>Tesla (T)</td>
+            <td>Campo que ejerce fuerza sobre cargas en movimiento.</td>
+        </tr>
+        <tr>
+            <td><span id="v-latex"></span></td>
+            <td>Velocidad de la carga</td>
+            <td>Metros/segundo (m/s)</td>
+            <td>Velocidad con la que se mueve la carga en el campo magnético.</td>
+        </tr>
+        <tr>
+            <td><span id="cross-latex"></span></td>
+            <td>Producto vectorial</td>
+            <td>---</td>
+            <td>Indica una dirección perpendicular al plano de los vectores involucrados.</td>
+        </tr>
+        <tr>
+            <td><span id="theta-latex"></span></td>
+            <td>Ángulo entre <span id="v2-latex"></span> y <span id="b2-latex"></span></td>
+            <td>Radianes (rad)</td>
+            <td>Útil en la forma escalar de la ley de Lorentz: <span id="f2-latex"></span></td>
+        </tr>
+    </table>
+
+    <div class="equation">
+        <b>Ecuación de la Ley de Lorentz:</b>
+        <div id="lorentz-eq"></div>
+        <script>
+            // Renderizar símbolos con KaTeX
+            function renderLatex(id, latex) {
+                katex.render(latex, document.getElementById(id), {
+                    throwOnError: false
+                });
+            }
+
+            renderLatex('f-latex', '\\vec{F}');
+            renderLatex('q-latex', 'q');
+            renderLatex('e-latex', '\\vec{E}');
+            renderLatex('b-latex', '\\vec{B}');
+            renderLatex('v-latex', '\\vec{v}');
+            renderLatex('cross-latex', '\\times');
+            renderLatex('theta-latex', '\\theta');
+            renderLatex('v2-latex', '\\vec{v}');
+            renderLatex('b2-latex', '\\vec{B}');
+            renderLatex('f2-latex', 'F = qvB\\sin\\theta');
+            renderLatex('lorentz-eq', '\\vec{F} = q(\\vec{E} + \\vec{v} \\times \\vec{B})');
+        </script>
+        renderLatex('lorentz-eq', '\\vec{F} = q(\\vec{E} + \\vec{v} \\times \\vec{B})');
+        </script>
+
+</body>
+
+</html>
