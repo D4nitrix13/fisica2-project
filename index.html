@@ -3,8 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Simbología de la Ley de Lorentz</title>
-    <!-- Reemplaza latex.js por KaTeX para renderizar matemáticas en línea -->
+    <title>Calculadora Ley de Lorentz</title>
     <link rel="stylesheet"
         href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
@@ -19,119 +18,235 @@
             color: #2c3e50;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background-color: #ffffff;
+        .simbolos {
+            margin-bottom: 20px;
         }
 
-        th,
-        td {
+        .simbolos button {
+            margin: 5px;
+            padding: 10px 18px;
+            font-size: 1.2em;
+            background: #ecf0f1;
             border: 1px solid #bdc3c7;
-            padding: 12px;
-            text-align: left;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.2s;
         }
 
-        th {
-            background-color: #ecf0f1;
-        }
-
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
+        .simbolos button:hover {
+            background: #d0e6fa;
         }
 
         .equation {
-            margin-top: 20px;
+            margin: 20px 0;
             font-size: 1.2em;
             background-color: #ffffff;
             padding: 15px;
             border: 1px solid #bdc3c7;
             border-radius: 5px;
         }
+
+        .calc-form {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #bdc3c7;
+            max-width: 400px;
+            margin: auto;
+        }
+
+        .calc-form label {
+            display: block;
+            margin-top: 12px;
+        }
+
+        .calc-form input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 4px;
+            margin-bottom: 10px;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+            font-size: 1em;
+        }
+
+        .calc-form button[type="submit"] {
+            background: #2c3e50;
+            color: #fff;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 5px;
+            font-size: 1em;
+            cursor: pointer;
+        }
+
+        .calc-form button[type="submit"]:hover {
+            background: #2980b9;
+        }
+
+        #resultado {
+            margin-top: 15px;
+            font-weight: bold;
+            color: #2980b9;
+        }
     </style>
 </head>
 
 <body>
+    <h1>Calculadora Ley de Lorentz</h1>
 
-    <h1>Simbología de la Ley de Lorentz</h1>
-
-    <table>
-        <tr>
-            <th>Símbolo</th>
-            <th>Significado</th>
-            <th>Unidad (SI)</th>
-            <th>Descripción</th>
-        </tr>
-        <tr>
-            <td><span id="f-latex"></span></td>
-            <td>Fuerza de Lorentz</td>
-            <td>Newton (N)</td>
-            <td>Fuerza total sobre una carga en presencia de campos eléctrico y magnético.</td>
-        </tr>
-        <tr>
-            <td><span id="q-latex"></span></td>
-            <td>Carga eléctrica</td>
-            <td>Coulomb (C)</td>
-            <td>Valor de la carga puntual que experimenta la fuerza.</td>
-        </tr>
-        <tr>
-            <td><span id="e-latex"></span></td>
-            <td>Campo eléctrico</td>
-            <td>Voltio/metro (V/m)</td>
-            <td>Campo que ejerce fuerza sobre cargas eléctricas, independiente de su movimiento.</td>
-        </tr>
-        <tr>
-            <td><span id="b-latex"></span></td>
-            <td>Campo magnético</td>
-            <td>Tesla (T)</td>
-            <td>Campo que ejerce fuerza sobre cargas en movimiento.</td>
-        </tr>
-        <tr>
-            <td><span id="v-latex"></span></td>
-            <td>Velocidad de la carga</td>
-            <td>Metros/segundo (m/s)</td>
-            <td>Velocidad con la que se mueve la carga en el campo magnético.</td>
-        </tr>
-        <tr>
-            <td><span id="cross-latex"></span></td>
-            <td>Producto vectorial</td>
-            <td>---</td>
-            <td>Indica una dirección perpendicular al plano de los vectores involucrados.</td>
-        </tr>
-        <tr>
-            <td><span id="theta-latex"></span></td>
-            <td>Ángulo entre <span id="v2-latex"></span> y <span id="b2-latex"></span></td>
-            <td>Radianes (rad)</td>
-            <td>Útil en la forma escalar de la ley de Lorentz: <span id="f2-latex"></span></td>
-        </tr>
-    </table>
+    <div class="simbolos">
+        <button onclick="insertSymbol('q')"><span id="q-latex"></span></button>
+        <button onclick="insertSymbol('E')"><span id="e-latex"></span></button>
+        <button onclick="insertSymbol('v')"><span id="v-latex"></span></button>
+        <button onclick="insertSymbol('B')"><span id="b-latex"></span></button>
+        <button onclick="insertSymbol('θ')"><span id="theta-latex"></span></button>
+        <button onclick="insertSymbol('×')"><span id="cross-latex"></span></button>
+    </div>
 
     <div class="equation">
         <b>Ecuación de la Ley de Lorentz:</b>
         <div id="lorentz-eq"></div>
-        <script>
-            // Renderizar símbolos con KaTeX
-            function renderLatex(id, latex) {
-                katex.render(latex, document.getElementById(id), {
-                    throwOnError: false
-                });
-            }
+    </div>
 
-            renderLatex('f-latex', '\\vec{F}');
-            renderLatex('q-latex', 'q');
-            renderLatex('e-latex', '\\vec{E}');
-            renderLatex('b-latex', '\\vec{B}');
-            renderLatex('v-latex', '\\vec{v}');
-            renderLatex('cross-latex', '\\times');
-            renderLatex('theta-latex', '\\theta');
-            renderLatex('v2-latex', '\\vec{v}');
-            renderLatex('b2-latex', '\\vec{B}');
-            renderLatex('f2-latex', 'F = qvB\\sin\\theta');
-            renderLatex('lorentz-eq', '\\vec{F} = q(\\vec{E} + \\vec{v} \\times \\vec{B})');
-        </script>
+    <form class="calc-form"
+        onsubmit="calcularLorentz(event)">
+        <label for="q">Carga (<span id="q2-latex"></span>) [Coulomb]:</label>
+        <input type="number"
+            step="any"
+            id="q"
+            name="q"
+            required>
+
+        <label for="e">Campo eléctrico (<span id="e2-latex"></span>) [V/m]:</label>
+        <input type="number"
+            step="any"
+            id="e"
+            name="e"
+            required>
+
+        <label for="v">Velocidad (<span id="v2-latex"></span>) [m/s]:</label>
+        <input type="number"
+            step="any"
+            id="v"
+            name="v"
+            required>
+
+        <label for="b">Campo magnético (<span id="b2-latex"></span>) [T]:</label>
+        <input type="number"
+            step="any"
+            id="b"
+            name="b"
+            required>
+
+        <label for="theta">Ángulo (<span id="theta2-latex"></span>) [grados]:</label>
+        <input type="number"
+            step="any"
+            id="theta"
+            name="theta"
+            required>
+
+        <button type="submit">Calcular Fuerza</button>
+        <div id="resultado"></div>
+    </form>
+
+    <script>
+        // Renderizar símbolos con KaTeX
+        function renderLatex(id, latex) {
+            katex.render(latex, document.getElementById(id), {
+                throwOnError: false
+            });
+        }
+
+        renderLatex('q-latex', 'q');
+        renderLatex('e-latex', '\\vec{E}');
+        renderLatex('v-latex', '\\vec{v}');
+        renderLatex('b-latex', '\\vec{B}');
+        renderLatex('theta-latex', '\\theta');
+        renderLatex('cross-latex', '\\times');
         renderLatex('lorentz-eq', '\\vec{F} = q(\\vec{E} + \\vec{v} \\times \\vec{B})');
-        </script>
+        renderLatex('q2-latex', 'q');
+        renderLatex('e2-latex', '\\vec{E}');
+        renderLatex('v2-latex', '\\vec{v}');
+        renderLatex('b2-latex', '\\vec{B}');
+        renderLatex('theta2-latex', '\\theta');
 
+        // Insertar símbolo en el campo activo
+        let lastActive = null;
+        document.querySelectorAll('.calc-form input').forEach(inp => {
+            inp.addEventListener('focus', function () {
+                lastActive = this;
+            });
+        });
+
+        function insertSymbol(symbol) {
+            if (lastActive) {
+                let start = lastActive.selectionStart;
+                let end = lastActive.selectionEnd;
+                let value = lastActive.value;
+                lastActive.value = value.substring(0, start) + symbol + value.substring(end);
+                lastActive.focus();
+                lastActive.selectionStart = lastActive.selectionEnd = start + symbol.length;
+            }
+        }
+
+        // Calcular la fuerza de Lorentz (forma escalar) y mostrar explicación detallada en LaTeX
+        function calcularLorentz(e) {
+            e.preventDefault();
+            let q = parseFloat(document.getElementById('q').value);
+            let E = parseFloat(document.getElementById('e').value);
+            let v = parseFloat(document.getElementById('v').value);
+            let B = parseFloat(document.getElementById('b').value);
+            let theta = parseFloat(document.getElementById('theta').value);
+
+            // Convertir ángulo a radianes
+            let thetaRad = theta * Math.PI / 180;
+
+            // F = qE + qvBsinθ
+            let F = q * E + q * v * B * Math.sin(thetaRad);
+
+            // Construir explicación paso a paso en LaTeX
+            let latex = `
+            \\textbf{Datos:} \\\\
+            q = ${q}~\\text{C} \\\\
+            E = ${E}~\\text{V/m} \\\\
+            v = ${v}~\\text{m/s} \\\\
+            B = ${B}~\\text{T} \\\\
+            \\theta = ${theta}^\\circ \\\\[1em]
+            \\textbf{Fórmula:} \\\\
+            F = qE + qvB\\sin\\theta \\\\[1em]
+            \\textbf{Sustituyendo:} \\\\
+            F = (${q})(${E}) + (${q})(${v})(${B})\\sin(${theta}^\\circ) \\\\
+            F = ${(q*E).toExponential(4)} + (${q*v*B}).toExponential(4) \\times \\sin(${theta}^\\circ) \\\\
+            F = ${(q*E).toExponential(4)} + (${(q*v*B*Math.sin(thetaRad)).toExponential(4)}) \\\\
+            F = ${(F).toExponential(4)}~\\text{N}
+            `;
+
+            // Mostrar solo el resultado numérico en el formulariocloudflared tunnel —url http://localhost:3000
+            document.getElementById('resultado').textContent = `F = ${F.toExponential(4)} N`;
+
+            // Mostrar la resolución detallada fuera del formulario
+            let resolDiv = document.getElementById('resolucion');
+            if (!resolDiv) {
+            resolDiv = document.createElement('div');
+            resolDiv.id = 'resolucion';
+            resolDiv.style.marginTop = '30px';
+            resolDiv.style.background = '#fff';
+            resolDiv.style.padding = '20px';
+            resolDiv.style.borderRadius = '8px';
+            resolDiv.style.border = '1px solid #bdc3c7';
+            resolDiv.style.maxWidth = '600px';
+            resolDiv.style.marginLeft = 'auto';
+            resolDiv.style.marginRight = 'auto';
+            document.body.appendChild(resolDiv);
+            }
+            resolDiv.innerHTML = '';
+            katex.render(latex, resolDiv, {
+            throwOnError: false,
+            displayMode: true
+            });
+        }
+    </script>
 </body>
 
 </html>
