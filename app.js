@@ -208,18 +208,70 @@ function resolver() {
 
 
             case 5: // Movimiento helicoidal
-                const v_par = vz;
                 const v_perp = Math.sqrt(vx ** 2 + vy ** 2);
-                const r5 = m * v_perp / (Math.abs(q) * norm(B));
-                const w = Math.abs(q) * norm(B) / m;
-                const T5 = 2 * Math.PI / w;
-                result = `r = ${r5.toExponential(3)} m, ω = ${w.toExponential(3)} rad/s, T = ${T5.toExponential(3)} s`;
+                const v_par = vz;
+                const B5 = norm([Bx, By, Bz]);
+
+                const r5 = (m * v_perp) / (Math.abs(q) * B5);
+                const w5 = (Math.abs(q) * B5) / m;
+                const T5 = (2 * Math.PI) / w5;
+
+                resumenLatex = `
+                    \\textbf{Resultados del movimiento helicoidal:} \\\\
+                    r = ${r5.toExponential(3)}~\\text{m}, \\quad
+                    \\omega = ${w5.toExponential(3)}~\\text{rad/s}, \\quad
+                    T = ${T5.toExponential(3)}~\\text{s}
+                `;
+
+                steps = `
+                    \\textbf{Ejercicio 5 – Movimiento helicoidal} \\\\[1em]
+                    \\vec{v} = (${vx}, ${vy}, ${vz})~\\text{m/s}, \\quad
+                    \\vec{B} = (${Bx}, ${By}, ${Bz})~\\text{T} \\\\[1em]
+
+                    v_\\perp = \\sqrt{v_x^2 + v_y^2} =
+                    \\sqrt{(${vx})^2 + (${vy})^2} =
+                    ${v_perp.toExponential(3)}~\\text{m/s} \\\\[1em]
+
+                    v_\\parallel = v_z = ${v_par.toExponential(3)}~\\text{m/s} \\\\[1em]
+
+                    r = \\frac{mv_\\perp}{|q|B} =
+                    \\frac{${m} \\cdot ${v_perp.toExponential(3)}}{|${q}| \\cdot ${B5}} =
+                    ${r5.toExponential(3)}~\\text{m} \\\\[1em]
+
+                    \\omega = \\frac{|q|B}{m} =
+                    \\frac{|${q}| \\cdot ${B5}}{${m}} =
+                    ${w5.toExponential(3)}~\\text{rad/s} \\\\[1em]
+
+                    T = \\frac{2\\pi}{\\omega} =
+                    \\frac{2\\pi}{${w5.toExponential(3)}} =
+                    ${T5.toExponential(3)}~\\text{s}
+                `;
                 break;
 
+
             case 6: // F conocida, v perpendicular a B
-                const v6 = F_input / (Math.abs(q) * norm(B));
-                result = `v = ${v6.toExponential(3)} m/s`;
+                const B6 = norm([Bx, By, Bz]); // magnitud de B
+                const v6 = F_input / (Math.abs(q) * B6); // v = F / (|q|·B)
+
+                resumenLatex = `
+                    \\textbf{Velocidad cuando } \\vec{v} \\perp \\vec{B}: \\\\
+                    v = \\frac{F}{|q|B} =
+                    \\frac{${F_input}}{|${q}| \\cdot ${B6}} =
+                    ${v6.toExponential(3)}~\\text{m/s}
+                `;
+
+                steps = `
+                    \\textbf{Ejercicio 6 – Componente desconocida} \\\\[1em]
+                    \\text{Dado que } \\vec{v} \\perp \\vec{B}, \\text{ la fuerza magnética es:} \\\\
+                    F = |q| \\cdot v \\cdot B \\\\[1em]
+
+                    \\Rightarrow v = \\frac{F}{|q|B} =
+                    \\frac{${F_input}}{(${Math.abs(q)})(${B6})} =
+                    ${v6.toExponential(3)}~\\text{m/s}
+                `;
+
                 break;
+
 
             case 7: // F = q(E + v x B)
                 const vxB7 = cross(v, B);
