@@ -48,7 +48,10 @@ const valoresPorEjercicio = {
         q: "-1.6e-19",
         vx: "0", vy: "0", vz: "3e5", Ex: "5e3",
         Ey: "0", Ez: "0", Bx: "0", By: "0.01", Bz: "0"
-    }
+    },
+
+    8: ['q', 'm', 'vx', 'vy', 'vz', 'Ex', 'Ey', 'Ez', 'Bx', 'By', 'Bz']
+
 };
 
 // Campos visibles por ejercicio
