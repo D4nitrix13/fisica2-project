@@ -273,12 +273,36 @@ function resolver() {
                 break;
 
 
-            case 7: // F = q(E + v x B)
-                const vxB7 = cross(v, B);
-                const sum = E.map((e, i) => e + vxB7[i]);
-                const F7 = sum.map(x => q * x);
-                result = `F = [${F7.map(x => x.toExponential(3)).join(', ')}] N`;
+            case 7: // Fuerza total vectorial
+                const vxB = cross(v, B);
+                const suma = E.map((e, i) => e + vxB[i]);
+                const F7 = suma.map(x => q * x);
+
+                resumenLatex = `
+                    \\textbf{Fuerza total sobre la carga:} \\\\
+                    \\vec{F} = q (\\vec{E} + \\vec{v} \\times \\vec{B}) =
+                    [${F7.map(x => x.toExponential(3)).join(", ")}]~\\text{N}
+                `;
+
+                steps = `
+                    \\textbf{Ejercicio 7 – Fuerza total vectorial} \\\\[1em]
+
+                    \\vec{v} = (${v[0]}, ${v[1]}, ${v[2]})~\\text{m/s}, \\quad
+                    \\vec{E} = (${E[0]}, ${E[1]}, ${E[2]})~\\text{V/m}, \\quad
+                    \\vec{B} = (${B[0]}, ${B[1]}, ${B[2]})~\\text{T} \\\\[1em]
+
+                    \\vec{v} \\times \\vec{B} =
+                    [${vxB.map(x => x.toExponential(3)).join(", ")}] \\\\[1em]
+
+                    \\vec{E} + \\vec{v} \\times \\vec{B} =
+                    [${suma.map(x => x.toExponential(3)).join(", ")}] \\\\[1em]
+
+                    \\vec{F} = q(\\vec{E} + \\vec{v} \\times \\vec{B}) =
+                    ${q} \\cdot [${suma.map(x => x.toExponential(3)).join(", ")}] =
+                    [${F7.map(x => x.toExponential(3)).join(", ")}]~\\text{N}
+                `;
                 break;
+
 
             default:
                 result = 'Tipo de ejercicio no válido.';
