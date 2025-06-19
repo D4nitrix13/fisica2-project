@@ -1,17 +1,81 @@
-// Mapeo de qué campos se usan en cada tipo de ejercicio
-const camposPorEjercicio = {
-    1: ['q', 'm', 'vz', 'Bz'],                               // Movimiento circular
-    2: ['q', 'm', 't', 'Ex'],                   // Campo E y aceleración lineal
-    3: ['Ex', 'Bz'],  // Campo eléctrico en X y campo magnético en Z
-    4: ['q', 'vx', 'vy', 'vz', 'Bx', 'By', 'Bz'],           // Producto vectorial v x B
-    5: ['q', 'm', 'vx', 'vy', 'vz', 'Bx', 'By', 'Bz'],      // Movimiento helicoidal
-    6: ['q', 'Bx', 'By', 'Bz', 'F'],                        // Calcular velocidad con F conocida
-    7: ['q', 'vx', 'vy', 'vz', 'Ex', 'Ey', 'Ez', 'Bx', 'By', 'Bz']  // Fuerza total vectorial
+// Enunciados LaTeX por tipo de ejercicio
+const enunciadosLatex = {
+    1: `\\textbf{Ejercicio 1 – Movimiento circular} \\\\ 
+  \\text{Un electrón con una velocidad de } 3.0 \\times 10^6~\\text{m/s} \\text{ penetra perpendicularmente en un campo magnético uniforme de } 0.01~\\text{T}. \\\\
+  \\text{Calcula el radio de la trayectoria circular que describe, así como el período de la misma.} \\\\
+  \\text{Usa } q = -1.6 \\times 10^{-19}~\\text{C},\\quad m = 9.11 \\times 10^{-31}~\\text{kg}`,
+
+    2: `\\textbf{Ejercicio 2 – Campo eléctrico, aceleración lineal} \\\\
+  \\text{Una partícula con carga } 2.0 \\times 10^{-19}~\\text{C} \\text{ se encuentra inicialmente en reposo en una región con un campo eléctrico uniforme de } 6.0 \\times 10^3~\\text{V/m}. \\\\
+  \\text{Calcula la fuerza que actúa sobre la partícula, su aceleración y la velocidad que alcanza después de 2 microsegundos.} \\\\
+  \\text{Supón que su masa es } 1.0 \\times 10^{-27}~\\text{kg}`,
+
+    3: `\\textbf{Ejercicio 3 – Campo E y B perpendiculares} \\\\
+  \\text{Un protón se mueve en línea recta con velocidad constante donde hay un campo eléctrico } \\vec{E} = 1.5 \\times 10^4~\\text{V/m} \\text{ y un campo magnético } \\vec{B} = 0.01~\\text{T}, \\text{ perpendiculares entre sí.} \\\\
+  \\text{Determina la velocidad que debe tener el protón para que la fuerza total sea nula.}`,
+
+    4: `\\textbf{Ejercicio 4 – Producto vectorial completo} \\\\
+  \\text{Una partícula con carga } +1.6 \\times 10^{-19}~\\text{C} \\text{ y velocidad } \\vec{v} = (4.0 \\times 10^5)\\hat{i} + (2.0 \\times 10^5)\\hat{j}~\\text{m/s} \\\\
+  \\text{se mueve en un campo magnético } \\vec{B} = 0.03\\hat{k}~\\text{T}. Calcula la fuerza magnética vectorial } \\vec{F}_B = q \\vec{v} \\times \\vec{B}`,
+
+    5: `\\textbf{Ejercicio 5 – Movimiento helicoidal} \\\\
+  \\text{Una partícula cargada se mueve en un campo magnético uniforme con una velocidad que tiene una componente paralela y otra perpendicular al campo.} \\\\
+  \\text{Si } \\vec{v} = 2 \\times 10^6~\\hat{i} + 1 \\times 10^6~\\hat{k}~\\text{m/s} \\text{ y } \\vec{B} = 0.05~\\hat{k}~\\text{T}, \\\\
+  \\text{determina el radio de la trayectoria helicoidal, la velocidad angular y el período.}`,
+
+    6: `\\textbf{Ejercicio 6 – Componente desconocida} \\\\
+  \\text{Una partícula con carga } q = 1.6 \\times 10^{-19}~\\text{C} \\text{ se mueve con una velocidad desconocida en una región con } B = 0.04~\\text{T}. \\\\
+  \\text{Se sabe que la fuerza magnética que experimenta es } 6.4 \\times 10^{-15}~\\text{N} \\text{ y que } \\vec{v} \\perp \\vec{B}. \\\\
+  \\text{Determina la magnitud de la velocidad.}`,
+
+    7: `\\textbf{Ejercicio 7 – Fuerza total vectorial} \\\\
+  \\text{Una partícula con carga negativa se mueve en una región donde hay un campo eléctrico } \\vec{E} = 5 \\times 10^3~\\hat{i}~\\text{V/m} \\\\
+  \\text{y un campo magnético } \\vec{B} = 0.01~\\hat{j}~\\text{T}. \\text{Si su velocidad es } \\vec{v} = 3 \\times 10^5~\\hat{k}~\\text{m/s}, \\\\
+  \\text{calcula la fuerza total que actúa sobre la partícula, indicando dirección y sentido.}`
 };
 
+
+// Valores por defecto por ejercicio
+const valoresPorEjercicio = {
+    1: { q: "1.6e-19", m: "9.1e-31", vz: "3e6", Bz: "0.05" },
+    2: { q: "1.6e-19", m: "9.1e-31", t: "2", Ex: "1e4" },
+    3: { Ex: "5e3", Bz: "0.02" },
+    4: { q: "1.6e-19", vx: "3e5", vy: "0", vz: "0", Bx: "0", By: "0", Bz: "0.01" },
+    5: { q: "1.6e-19", m: "9.1e-31", vx: "1e5", vy: "2e5", vz: "3e5", Bx: "0", By: "0", Bz: "0.02" },
+    6: { q: "1.6e-19", Bx: "0", By: "0.01", Bz: "0", F: "3.2e-14" },
+    7: { q: "-1.6e-19", vx: "0", vy: "0", vz: "3e5", Ex: "5e3", Ey: "0", Ez: "0", Bx: "0", By: "0.01", Bz: "0" }
+};
+
+// Campos visibles por ejercicio
+const camposPorEjercicio = {
+    1: ['q', 'm', 'vz', 'Bz'],
+    2: ['q', 'm', 't', 'Ex'],
+    3: ['Ex', 'Bz'],
+    4: ['q', 'vx', 'vy', 'vz', 'Bx', 'By', 'Bz'],
+    5: ['q', 'm', 'vx', 'vy', 'vz', 'Bx', 'By', 'Bz'],
+    6: ['q', 'Bx', 'By', 'Bz', 'F'],
+    7: ['q', 'vx', 'vy', 'vz', 'Ex', 'Ey', 'Ez', 'Bx', 'By', 'Bz']
+};
+
+// Renderiza enunciado con KaTeX
+function renderEnunciado() {
+    const tipo = document.getElementById("tipo").value;
+    const enunciadoDiv = document.getElementById("enunciado");
+    const enunciadoLatex = enunciadosLatex[tipo];
+
+    if (enunciadoDiv && enunciadoLatex) {
+        katex.render(enunciadoLatex, enunciadoDiv, {
+            throwOnError: false,
+            displayMode: true
+        });
+    }
+}
+
+// Actualiza visibilidad de campos y valores
 function actualizarVisibilidadCampos() {
-    const tipo = document.getElementById('tipo').value;
+    const tipo = document.getElementById("tipo").value;
     const camposVisibles = camposPorEjercicio[tipo] || [];
+    const valoresPorDefecto = valoresPorEjercicio[tipo] || {};
 
     const todosLosCampos = [
         'q', 'm', 'vx', 'vy', 'vz',
@@ -29,16 +93,50 @@ function actualizarVisibilidadCampos() {
             input.style.display = mostrar ? 'block' : 'none';
             label.style.display = mostrar ? 'block' : 'none';
             input.disabled = !mostrar;
-            if (!mostrar) input.value = ''; // limpia campos que no se usan
+            input.value = mostrar && valoresPorDefecto[id] ? valoresPorDefecto[id] : "";
         }
     });
+
+    renderEnunciado();
 }
 
-// Activar al cambiar el tipo de ejercicio
-document.getElementById('tipo').addEventListener('change', actualizarVisibilidadCampos);
+// Ejecutar al cargar DOM y al cambiar selección
+document.addEventListener("DOMContentLoaded", () => {
+    actualizarVisibilidadCampos();
+    document.getElementById("tipo").addEventListener("change", actualizarVisibilidadCampos);
+});
 
-// Activar al cargar
-actualizarVisibilidadCampos();
+// Inicializar:
+renderEnunciado(1); // Mostrar ejercicio 1 al inicio
+
+
+// --------------------------------------------------------------------------------------------------------------------------------------
+
+
+function actualizarVisibilidadCampos() {
+    const tipo = document.getElementById('tipo').value;
+    const camposVisibles = camposPorEjercicio[tipo] || [];
+    const todos = ['q', 'm', 'vx', 'vy', 'vz', 'Ex', 'Ey', 'Ez', 'Bx', 'By', 'Bz', 't', 'F'];
+
+    todos.forEach(id => {
+        const input = document.getElementById(id);
+        const label = document.querySelector(`label[for="${id}"]`) || input?.previousElementSibling;
+
+        const visible = camposVisibles.includes(id);
+
+        if (input && label) {
+            input.style.display = visible ? 'block' : 'none';
+            label.style.display = visible ? 'block' : 'none';
+            input.disabled = !visible;
+            input.value = visible && valoresPorEjercicio[tipo]?.[id] ? valoresPorEjercicio[tipo][id] : '';
+        }
+    });
+
+
+}
+
+document.getElementById('tipo').addEventListener('change', actualizarVisibilidadCampos);
+window.addEventListener('DOMContentLoaded', actualizarVisibilidadCampos);
 
 
 // --------------------------------------------------------------------------------------------------------------------------------------

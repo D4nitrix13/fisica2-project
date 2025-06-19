@@ -79,3 +79,12 @@ label {
     overflow-x: auto;
     display: block;
 }
+
+.enunciado-latex {
+    margin: 1rem auto;
+    padding: 1rem;
+    max-width: 800px;
+    border-left: 4px solid #007bff;
+    background-color: #f8f9fa;
+    font-size: 1rem;
+}
