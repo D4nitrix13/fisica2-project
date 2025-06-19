@@ -34,60 +34,118 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function enviarPrompt(enunciadoUsuario) {
     const prompt = `
-Dado un enunciado de Física 2 sobre el tema "Fuerza de Lorentz sobre una carga puntual", quiero que analices el texto y extraigas los valores físicos mencionados, asignándolos a los siguientes campos:
+        Dado el siguiente enunciado de Física 2 sobre "Fuerza de Lorentz sobre una carga puntual", devuelve un JSON con únicamente los valores numéricos explícitos que aparecen en el enunciado. Asocia cada valor al campo correspondiente si está presente. Si un campo no aparece, simplemente omítelo.
 
-* Campo eléctrico: Ex, Ey, Ez
-* Campo magnético: Bx, By, Bz
-* Velocidad: vx, vy, vz
-* Carga: q
-* Masa: m
-* Tiempo: t
-* Fuerza: F (si se menciona)
+        Los posibles campos son:  
 
-Si algún valor no está presente en el enunciado, coloca un cero o un valor simbólico (por ejemplo, "no se menciona" o "0.0").
+        - Ex, Ey, Ez  
+        - Bx, By, Bz  
+        - vx, vy, vz  
+        - q (carga)  
+        - m (masa)  
+        - t (tiempo)  
+        - F (fuerza)
 
-Ejemplo de salida esperada (solo esto) no quiero que pongas markdown:
+        No expliques, no desarrolles y no hagas cálculos no pongas comentarios de ningun tipo y si el valor de un campo es null omitelo. Devuelve solamente el JSON con los valores encontrados.
 
-Ex: 0
-Ey: 0
-Ez: 0
-Bx: 0
-By: 0
-Bz: 0.02
-vx: 3e5
-vy: 0
-vz: 0
-q: -1.6e-19
-m: no se menciona
-t: no se menciona
-F: no se menciona
+        **Ejemplo de respuesta esperada:**
+        
+        {
+        "q": -1.6e-19,
+        "vx": 3e5,
+        "Bz": 0.02
+        }
 
-Solo quiero los datos extraídos, organizados por campo. No hagas cálculos, solo la extracción de datos del enunciado.
-
----
-
-Enunciado: ${enunciadoUsuario}
-`;
+        Enunciado: ${enunciadoUsuario}
+    `;
 
     const res = await fetch('http://127.0.0.1:11434/api/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-            model: 'deepseek-r1',
-            prompt: prompt,
+            model: 'mistral',
+            prompt,
             stream: true
         })
     });
 
     const reader = res.body.getReader();
-    const decoder = new TextDecoder('utf-8');
-    let textoCompleto = '';
+    const decoder = new TextDecoder();
+    let texto = "";
+    let done = false;
+    let full = "";
+    const output = document.getElementById('output'); // Asegúrate de tener un elemento con id="output"
 
-    while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        textoCompleto += decoder.decode(value);
+    while (!done) {
+        const { value, done: doneReading } = await reader.read();
+        done = doneReading;
+        const chunk = decoder.decode(value || new Uint8Array(), { stream: true });
+
+        chunk.split('\n').forEach(line => {
+            if (line.trim()) {
+                try {
+                    const obj = JSON.parse(line);
+                    if (obj.response) {
+                        // Quita cualquier fragmento pensado
+                        const clean = obj.response.replace(/<think>.*?<\/think>/gs, '');
+                        full += clean;
+                        texto = full;
+                        if (output) output.textContent = full;
+                    }
+                } catch (e) {
+                    // Ignorar líneas JSON parciales
+                }
+            }
+        });
+
+    }
+    texto = full.trim();
+    // console.log(texto); // Muestra crudo lo recibido
+
+    // Intentar convertir a objeto JSON seguro
+    try {
+        const jsonLimpio = texto
+            .replace(/\/\/.*$/gm, '')
+            .replace(/\/\*[\s\S]*?\*\//g, '')
+            .replace(/,\s*}/g, '}')
+            .replace(/,\s*]/g, ']');
+
+        let datos = JSON.parse(jsonLimpio);
+        datos = Object.fromEntries(Object.entries(datos).filter(([_, v]) => v !== null));
+
+        console.log("✅ Objeto JSON válido:", datos);
+
+        function mostrarCamposDesdeJSON(datos) {
+            // Mostrar el contenedor principal
+            document.getElementById('campos-ocultos').style.display = 'block';
+
+            // 🔁 Primero ocultamos todos los inputs y labels
+            const inputs = document.querySelectorAll('#campos-ocultos input');
+            const labels = document.querySelectorAll('#campos-ocultos label');
+
+            inputs.forEach(input => input.style.display = 'none');
+            labels.forEach(label => label.style.display = 'none');
+
+            // 🔁 Luego mostramos solo los que aparecen en el JSON
+            for (const clave in datos) {
+                const input = document.getElementById(clave);
+                const label = document.getElementById(`${clave}-label`);
+
+                if (input && label) {
+                    input.style.display = 'block';
+                    label.style.display = 'block'; // Mostrar solo el label correcto
+
+                    input.value = datos[clave];
+                    label.textContent = clave.toUpperCase();
+                }
+            }
+        }
+
+
+        mostrarCamposDesdeJSON(datos);
+    } catch (error) {
+        console.error("❌ Error al convertir a JSON:", error.message);
+        console.error("Contenido que causó error:", texto);
     }
 
-    console.log('Respuesta del modelo:\n' + textoCompleto);
 }

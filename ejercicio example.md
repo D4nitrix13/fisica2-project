@@ -1,0 +1,1 @@
+Enunciado: Una partícula con carga -1.6×10⁻¹⁹ C se mueve con velocidad v = 3×10⁵ m/s perpendicular a un campo magnético B = 0.02 T. Calcula la fuerza magnética que actúa sobre ella.

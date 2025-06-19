@@ -1,29 +1,21 @@
-Dado un enunciado de Física 2 sobre el tema "Fuerza de Lorentz sobre una carga puntual", quiero que analices el texto y extraigas los valores físicos mencionados, asignándolos a los siguientes campos:
+Dado el siguiente enunciado de Física 2 sobre "Fuerza de Lorentz sobre una carga puntual", devuelve un JSON con únicamente los valores numéricos explícitos que aparecen en el enunciado. Asocia cada valor al campo correspondiente si está presente. Si un campo no aparece, simplemente omítelo.
 
-* Campo eléctrico: Ex, Ey, Ez
-* Campo magnético: Bx, By, Bz
-* Velocidad: vx, vy, vz
-* Carga: q
-* Masa: m
-* Tiempo: t
-* Fuerza: F (si se menciona)
+Los posibles campos son:  
 
-Si algún valor no está presente en el enunciado, coloca un cero o un valor simbólico (por ejemplo, "no se menciona" o "0.0").
+- Ex, Ey, Ez  
+- Bx, By, Bz  
+- vx, vy, vz  
+- q (carga)  
+- m (masa)  
+- t (tiempo)  
+- F (fuerza)
 
-Ejemplo de salida esperada (solo esto) no quiero que pongas markdown:
+No expliques, no desarrolles y no hagas cálculos no pongas comentarios de ningun tipo y si el valor de un campo es null omitelo. Devuelve solamente el JSON con los valores encontrados.
 
-Ex: 0
-Ey: 0
-Ez: 0
-Bx: 0
-By: 0
-Bz: 0.02
-vx: 3e5
-vy: 0
-vz: 0
-q: -1.6e-19
-m: no se menciona
-t: no se menciona
-F: no se menciona
+**Ejemplo de respuesta esperada:**
 
-Solo quiero los datos extraídos, organizados por campo. No hagas cálculos, solo la extracción de datos del enunciado.
+{
+  "q": -1.6e-19,
+  "vx": 3e5,
+  "Bz": 0.02
+}
