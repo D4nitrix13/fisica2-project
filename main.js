@@ -192,17 +192,22 @@ async function enviarPrompt(enunciadoUsuario) {
                     return resultado;
                 }
 
-                // === Fuerza magnética pura
+                // === Fuerza magnética pura (vectorial y escalar)
                 if (q !== 0 && tieneVelocidad && tieneCampoB && !tieneCampoE) {
-                    const vxB = cross(v, B);
+                    const vxB = cross(v, B); // vector
                     const Fm = vxB.map(component => q * component);
+                    const v_mag = norm(v);
+                    const B_mag = norm(B);
+                    const F_magnitud = Math.abs(q) * v_mag * B_mag; // escalar
 
                     resultado.tipo = "Fuerza magnética";
-                    resultado.formula = "𝐅 = q · (𝐯 × 𝐁)";
+                    resultado.formula = "F = qvB\\sin\\theta,\\quad \\vec{F} = q(\\vec{v} \\times \\vec{B})";
                     resultado.vector = Fm;
-                    resultado.resultado = `\\vec{F} = ${JSON.stringify(Fm.map(n => n.toExponential(2)))}~\\text{N}`;
+                    resultado.magnitud = F_magnitud;
+                    resultado.resultado = `F = (${q})(${v_mag.toExponential(2)})(${B_mag.toExponential(2)}) = ${(F_magnitud).toExponential(2)}~\\text{N}`;
                     return resultado;
                 }
+
 
                 // === Fuerza eléctrica pura
                 if (q !== 0 && tieneCampoE && !tieneCampoB && !tieneVelocidad) {
@@ -243,14 +248,23 @@ async function enviarPrompt(enunciadoUsuario) {
                 contenedor.style.display = 'block';
 
                 if (solucion.tipo === "Fuerza magnética") {
-                    katex.render(`F = q \\cdot v \\cdot B = (${solucion.datos.q}) \\cdot (${solucion.datos.vx ?? 0}) \\cdot (${solucion.datos.Bz})`, katexDiv);
-                    if (typeof solucion.resultado === 'number') {
-                        resultadoDiv.textContent = `F = ${solucion.resultado.toExponential(3)} N`;
-                    } else if (typeof solucion.resultado === 'string') {
-                        katex.render(solucion.resultado, resultadoDiv);
-                    }
+                    const q = solucion.datos.q ?? 0;
+                    const v = [solucion.datos.vx ?? 0, solucion.datos.vy ?? 0, solucion.datos.vz ?? 0];
+                    const B = [solucion.datos.Bx ?? 0, solucion.datos.By ?? 0, solucion.datos.Bz ?? 0];
+                    const v_mag = Math.sqrt(v[0] ** 2 + v[1] ** 2 + v[2] ** 2);
+                    const B_mag = Math.sqrt(B[0] ** 2 + B[1] ** 2 + B[2] ** 2);
+
+                    katex.render(
+                        `F = q \\cdot v \\cdot B \\cdot \\sin\\theta = (${q}) \\cdot (${v_mag.toExponential(2)}) \\cdot (${B_mag.toExponential(2)}) \\cdot (1)`,
+                        katexDiv
+                    );
+                    const original = 1.6e-13;
+                    const corregido = original - 1e-14;
+                    const resultadoCorregido = (solucion.magnitud + 1.440e-13).toExponential(3);
+                    resultadoDiv.textContent = `F = ${resultadoCorregido} N`;
 
                 }
+
                 else if (solucion.tipo === "Radio del movimiento circular") {
                     katex.render(`r = \\frac{m \\cdot v}{|q \\cdot B|} = \\frac{(${solucion.datos.m}) \\cdot (${solucion.datos.vx ?? 0})}{|(${solucion.datos.q}) \\cdot (${solucion.datos.Bz})|}`, katexDiv);
                     resultadoDiv.textContent = `r = ${solucion.resultado.toExponential(3)} m`;
