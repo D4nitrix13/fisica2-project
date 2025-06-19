@@ -110,43 +110,40 @@
     </div>
 
     <form class="calc-form"
-        onsubmit="calcularLorentz(event)">
-        <label for="q">Carga (<span id="q2-latex"></span>) [Coulomb]:</label>
+        onsubmit="calcularDatos(event)">
+        <label for="q">Carga del electrón (q) [C]:</label>
         <input type="number"
             step="any"
             id="q"
             name="q"
+            value="-1.6e-19"
             required>
 
-        <label for="e">Campo eléctrico (<span id="e2-latex"></span>) [V/m]:</label>
+        <label for="m">Masa del electrón (m) [kg]:</label>
         <input type="number"
             step="any"
-            id="e"
-            name="e"
+            id="m"
+            name="m"
+            value="9.11e-31"
             required>
 
-        <label for="v">Velocidad (<span id="v2-latex"></span>) [m/s]:</label>
+        <label for="v">Velocidad (v) [m/s]:</label>
         <input type="number"
             step="any"
             id="v"
             name="v"
+            value="3.0e6"
             required>
 
-        <label for="b">Campo magnético (<span id="b2-latex"></span>) [T]:</label>
+        <label for="b">Campo magnético (B) [T]:</label>
         <input type="number"
             step="any"
             id="b"
             name="b"
+            value="0,01"
             required>
 
-        <label for="theta">Ángulo (<span id="theta2-latex"></span>) [grados]:</label>
-        <input type="number"
-            step="any"
-            id="theta"
-            name="theta"
-            required>
-
-        <button type="submit">Calcular Fuerza</button>
+        <button type="submit">Calcular Movimiento Circular</button>
         <div id="resultado"></div>
     </form>
 
@@ -190,63 +187,56 @@
             }
         }
 
-        // Calcular la fuerza de Lorentz (forma escalar) y mostrar explicación detallada en LaTeX
-        function calcularLorentz(e) {
+        function calcularDatos(e) {
             e.preventDefault();
-            let q = parseFloat(document.getElementById('q').value);
-            let E = parseFloat(document.getElementById('e').value);
+            let q = Math.abs(parseFloat(document.getElementById('q').value)); // valor absoluto
+            let m = parseFloat(document.getElementById('m').value);
             let v = parseFloat(document.getElementById('v').value);
-            let B = parseFloat(document.getElementById('b').value);
-            let theta = parseFloat(document.getElementById('theta').value);
+            let B = parseFloat(document.getElementById('b').value.replace(",", "."));
 
-            // Convertir ángulo a radianes
-            let thetaRad = theta * Math.PI / 180;
+            // Cálculo de la fuerza magnética
+            let F = q * v * B;
 
-            // F = qE + qvBsinθ
-            let F = q * E + q * v * B * Math.sin(thetaRad);
+            // Cálculo del radio de la trayectoria
+            let r = (m * v) / (q * B);
 
-            // Construir explicación paso a paso en LaTeX
-            let latex = `
-            \\textbf{Datos:} \\\\
-            q = ${q}~\\text{C} \\\\
-            E = ${E}~\\text{V/m} \\\\
-            v = ${v}~\\text{m/s} \\\\
-            B = ${B}~\\text{T} \\\\
-            \\theta = ${theta}^\\circ \\\\[1em]
-            \\textbf{Fórmula:} \\\\
-            F = qE + qvB\\sin\\theta \\\\[1em]
-            \\textbf{Sustituyendo:} \\\\
-            F = (${q})(${E}) + (${q})(${v})(${B})\\sin(${theta}^\\circ) \\\\
-            F = ${(q*E).toExponential(4)} + (${q*v*B}).toExponential(4) \\times \\sin(${theta}^\\circ) \\\\
-            F = ${(q*E).toExponential(4)} + (${(q*v*B*Math.sin(thetaRad)).toExponential(4)}) \\\\
-            F = ${(F).toExponential(4)}~\\text{N}
-            `;
+            // Cálculo del período
+            let T = (2 * Math.PI * m) / (q * B);
 
-            // Mostrar solo el resultado numérico en el formulariocloudflared tunnel —url http://localhost:3000
-            document.getElementById('resultado').textContent = `F = ${F.toExponential(4)} N`;
+            // Mostrar resultados
+            let resultado = `
+            \\textbf{Resultados del movimiento circular:} \\\\
+            F = |q| \\cdot v \\cdot B = (${q})(${v})(${B}) = ${F.toExponential(4)}~\\text{N} \\\\[1em]
+            r = \\frac{m \\cdot v}{|q| \\cdot B} = \\frac{${m} \\cdot ${v}}{${q} \\cdot ${B}} = ${r.toExponential(4)}~\\text{m} \\\\[1em]
+            T = \\frac{2\\pi \\cdot m}{|q| \\cdot B} = \\frac{2\\pi \\cdot ${m}}{${q} \\cdot ${B}} = ${T.toExponential(4)}~\\text{s}
+        `;
 
-            // Mostrar la resolución detallada fuera del formulario
+            // Mostrar solo resumen corto
+            document.getElementById('resultado').textContent = `F = ${F.toExponential(4)} N | r = ${r.toExponential(4)} m | T = ${T.toExponential(4)} s`;
+
+            // Mostrar resolución en KaTeX
             let resolDiv = document.getElementById('resolucion');
             if (!resolDiv) {
-            resolDiv = document.createElement('div');
-            resolDiv.id = 'resolucion';
-            resolDiv.style.marginTop = '30px';
-            resolDiv.style.background = '#fff';
-            resolDiv.style.padding = '20px';
-            resolDiv.style.borderRadius = '8px';
-            resolDiv.style.border = '1px solid #bdc3c7';
-            resolDiv.style.maxWidth = '600px';
-            resolDiv.style.marginLeft = 'auto';
-            resolDiv.style.marginRight = 'auto';
-            document.body.appendChild(resolDiv);
+                resolDiv = document.createElement('div');
+                resolDiv.id = 'resolucion';
+                resolDiv.style.marginTop = '30px';
+                resolDiv.style.background = '#fff';
+                resolDiv.style.padding = '20px';
+                resolDiv.style.borderRadius = '8px';
+                resolDiv.style.border = '1px solid #bdc3c7';
+                resolDiv.style.maxWidth = '600px';
+                resolDiv.style.marginLeft = 'auto';
+                resolDiv.style.marginRight = 'auto';
+                document.body.appendChild(resolDiv);
             }
             resolDiv.innerHTML = '';
-            katex.render(latex, resolDiv, {
-            throwOnError: false,
-            displayMode: true
+            katex.render(resultado, resolDiv, {
+                throwOnError: false,
+                displayMode: true
             });
         }
     </script>
+
 </body>
 
 </html>
