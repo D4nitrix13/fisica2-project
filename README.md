@@ -2,7 +2,7 @@
 
 ollama run llama3.3
 
-Fuerza de lorentz sobre una carga puntual|
+Fuerza de lorentz sobre una carga puntual
 
 ---
 
