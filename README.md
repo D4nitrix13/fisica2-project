@@ -1,5 +1,7 @@
 <!-- cloudflared tunnel --url http://192.168.1.13:8000 -->
 
+ollama run llama3.3
+
 Fuerza de lorentz sobre una carga puntual
 
 Perfecto. A continuación te presento **la simbología más común** utilizada en el tema de la **Ley de Lorentz aplicada sobre una carga** en Física 2:

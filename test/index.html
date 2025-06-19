@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Chat DeepSeek‑R1 (Streaming sin think)</title>
+    <script>
+        async function ask() {
+            const prompt = document.getElementById('prompt').value;
+            const output = document.getElementById('output');
+            output.textContent = '';
+            let full = '';
+
+            const res = await fetch('http://127.0.0.1:11434/api/generate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    model: 'deepseek-r1',
+                    prompt,
+                    stream: true
+                })
+            });
+
+            const reader = res.body.getReader();
+            const decoder = new TextDecoder();
+            let done = false;
+
+            while (!done) {
+                const { value, done: doneReading } = await reader.read();
+                done = doneReading;
+                const chunk = decoder.decode(value, { stream: true });
+
+                chunk.split('\n').forEach(line => {
+                    if (line.trim()) {
+                        try {
+                            const obj = JSON.parse(line);
+                            if (obj.response) {
+                                // Quita cualquier fragmento pensado
+                                const clean = obj.response.replace(/<think>.*?<\/think>/gs, '');
+                                full += clean;
+                                output.textContent = full;
+
+                            }
+                        } catch (e) {
+                            // Ignorar líneas JSON parciales
+                        }
+                    }
+                });
+            }
+        }
+
+        window.ask = ask;
+    </script>
+</head>
+
+<body>
+    <h2>Chat DeepSeek‑R1 (Streaming sin think)</h2>
+    <input id="prompt"
+        style="width:100%"
+        placeholder="Escribe tu pregunta aquí" />
+    <button onclick="ask()">Enviar</button>
+    <h3>Respuesta:</h3>
+    <pre id="output"
+        style="background:#f0f0f0; padding:10px;"></pre>
+</body>
+
+</html>
