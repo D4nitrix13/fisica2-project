@@ -23,6 +23,7 @@
 
             const reader = res.body.getReader();
             const decoder = new TextDecoder();
+            let texto = "";
             let done = false;
 
             while (!done) {
@@ -38,15 +39,23 @@
                                 // Quita cualquier fragmento pensado
                                 const clean = obj.response.replace(/<think>.*?<\/think>/gs, '');
                                 full += clean;
+                                texto = full;
                                 output.textContent = full;
-
                             }
                         } catch (e) {
                             // Ignorar líneas JSON parciales
                         }
                     }
                 });
+
             }
+            texto = texto.split("</think>")[1].trim();
+            console.log(
+                texto
+            ); // Imprime la respuesta por consola
+
+
+
         }
 
         window.ask = ask;
