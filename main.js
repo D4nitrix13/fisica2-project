@@ -195,15 +195,19 @@ async function enviarPrompt(enunciadoUsuario) {
 
                 // === Fuerza total
                 if (q !== 0 && tieneVelocidad && tieneCampoB && tieneCampoE) {
-                    const vxB = cross(v, B);
-                    const F_total = E.map((e, i) => q * (e + vxB[i]));
+                    const vxB = cross(v, B); // producto cruzado
+                    const sumaComponentes = E.map((e, i) => e + vxB[i]); // E + v x B
+                    const F_total = sumaComponentes.map(f => q * f); // q(E + v x B)
+                    const F_magnitud = norm(F_total);
 
                     resultado.tipo = "Fuerza total vectorial";
                     resultado.formula = "𝐅 = q (𝐄 + 𝐯 × 𝐁)";
                     resultado.vector = F_total;
-                    resultado.resultado = `\\vec{F} = ${JSON.stringify(F_total.map(n => n.toExponential(2)))}~\\text{N}`;
+                    resultado.magnitud = F_magnitud;
+                    resultado.resultado = `\\vec{F} = q(\\vec{E} + \\vec{v} \\times \\vec{B}) = ${JSON.stringify(F_total.map(n => n.toExponential(2)))}~\\text{N}`;
                     return resultado;
                 }
+
 
                 // === Fuerza magnética pura
                 if (q !== 0 && tieneVelocidad && tieneCampoB && !tieneCampoE) {
@@ -277,6 +281,31 @@ async function enviarPrompt(enunciadoUsuario) {
                         katexDiv
                     );
                     resultadoDiv.textContent = `F = ${solucion.magnitud.toExponential(3)} N`;
+                }
+                // === Caso: Fuerza total vectorial (eléctrica + magnética)
+                else if (solucion.tipo === "Fuerza total vectorial") {
+                    // E + v x B
+                    const vxB = [
+                        v[1] * B[2] - v[2] * B[1],
+                        v[2] * B[0] - v[0] * B[2],
+                        v[0] * B[1] - v[1] * B[0]
+                    ];
+                    const suma = [
+                        E[0] + vxB[0],
+                        E[1] + vxB[1],
+                        E[2] + vxB[2]
+                    ];
+
+                    katex.render(
+                        `\\vec{F} = q(\\vec{E} + \\vec{v} \\times \\vec{B}) = (${q}) \\cdot ([${E.join(", ")}] + [${vxB.map(c => c.toExponential(2)).join(", ")}])`,
+                        katexDiv
+                    );
+
+                    katex.render(
+                        `\\vec{F} = \\left[ ${solucion.vector.map(n => n.toExponential(2)).join(",\\; ")} \\right]~\\text{N}`,
+                        resultadoDiv
+                    );
+
                 }
 
                 // === Caso: Campo magnético (desde F)
