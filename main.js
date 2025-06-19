@@ -232,26 +232,50 @@ async function enviarPrompt(enunciadoUsuario) {
                 };
 
                 const tabla = document.getElementById('tabla-datos');
-                tabla.innerHTML = ''; // Limpiar por si acaso
-
-                for (const clave in datos) {
-                    const valor = datos[clave];
-                    const descripcion = definiciones[clave] || 'Desconocido';
-
-                    const fila = document.createElement('tr');
-
-                    fila.innerHTML = `
-            <td style="padding: 0.5rem;">${clave}</td>
-            <td style="padding: 0.5rem;">${descripcion}</td>
-            <td style="padding: 0.5rem;">${valor}</td>
-        `;
-
-                    tabla.appendChild(fila);
-                }
-
-                // Mostrar el contenedor
+                tabla.innerHTML = ''; // Limpiar la tabla
                 document.getElementById('datos-extraidos').style.display = 'block';
+
+                for (const clave of Object.keys(definiciones)) {
+                    if (clave in datos) {
+                        const fila = document.createElement('tr');
+                        fila.style.borderBottom = '1px solid #444';
+
+                        // Creamos celdas vacías
+                        const tdSimbolo = document.createElement('td');
+                        const tdNombre = document.createElement('td');
+                        const tdValor = document.createElement('td');
+
+                        tdSimbolo.style.padding = '8px';
+                        tdSimbolo.style.border = '1px solid #444';
+                        tdSimbolo.style.textAlign = 'center';
+
+                        tdNombre.style.padding = '8px';
+                        tdNombre.style.border = '1px solid #444';
+
+                        tdValor.style.padding = '8px';
+                        tdValor.style.border = '1px solid #444';
+                        tdValor.style.textAlign = 'center';
+
+                        // Renderizar símbolo con KaTeX
+                        katex.render(clave, tdSimbolo, {
+                            throwOnError: false
+                        });
+
+                        // Insertar nombre y valor
+                        tdNombre.textContent = definiciones[clave];
+                        tdValor.textContent = datos[clave];
+
+                        // Agregar celdas a la fila
+                        fila.appendChild(tdSimbolo);
+                        fila.appendChild(tdNombre);
+                        fila.appendChild(tdValor);
+
+                        tabla.appendChild(fila);
+                    }
+                }
             }
+
+
 
 
             // ✅ Ejecutar
