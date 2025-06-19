@@ -38,7 +38,9 @@ const enunciadosLatex = {
 // Valores por defecto por ejercicio
 const valoresPorEjercicio = {
     1: { q: "-1.6e-19", m: "9.11e-31", vz: "3.0e6", Bz: "0.01" },
-    2: { q: "1.6e-19", m: "9.1e-31", t: "2", Ex: "1e4" },
+    2: { q: "2.0e-19", m: "1.0e-27", Ex: "6.0e3", t: "2.0e-6" },
+
+
     3: { Ex: "5e3", Bz: "0.02" },
     4: { q: "1.6e-19", vx: "3e5", vy: "0", vz: "0", Bx: "0", By: "0", Bz: "0.01" },
     5: { q: "1.6e-19", m: "9.1e-31", vx: "1e5", vy: "2e5", vz: "3e5", Bx: "0", By: "0", Bz: "0.02" },
