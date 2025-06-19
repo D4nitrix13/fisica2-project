@@ -214,11 +214,53 @@ async function enviarPrompt(enunciadoUsuario) {
                 }
             }
 
+            function mostrarDatosExtraidos(datos) {
+                const definiciones = {
+                    q: 'Carga eléctrica (C)',
+                    m: 'Masa (kg)',
+                    vx: 'Velocidad en X (m/s)',
+                    vy: 'Velocidad en Y (m/s)',
+                    vz: 'Velocidad en Z (m/s)',
+                    Ex: 'Campo eléctrico X (V/m)',
+                    Ey: 'Campo eléctrico Y (V/m)',
+                    Ez: 'Campo eléctrico Z (V/m)',
+                    Bx: 'Campo magnético X (T)',
+                    By: 'Campo magnético Y (T)',
+                    Bz: 'Campo magnético Z (T)',
+                    t: 'Tiempo (s)',
+                    F: 'Fuerza (N)'
+                };
+
+                const tabla = document.getElementById('tabla-datos');
+                tabla.innerHTML = ''; // Limpiar por si acaso
+
+                for (const clave in datos) {
+                    const valor = datos[clave];
+                    const descripcion = definiciones[clave] || 'Desconocido';
+
+                    const fila = document.createElement('tr');
+
+                    fila.innerHTML = `
+            <td style="padding: 0.5rem;">${clave}</td>
+            <td style="padding: 0.5rem;">${descripcion}</td>
+            <td style="padding: 0.5rem;">${valor}</td>
+        `;
+
+                    tabla.appendChild(fila);
+                }
+
+                // Mostrar el contenedor
+                document.getElementById('datos-extraidos').style.display = 'block';
+            }
+
+
             // ✅ Ejecutar
             const datosVisibles = obtenerValoresVisibles();
             const solucion = resolverEjercicio(datosVisibles);
             console.log("🧮 Solución del ejercicio:", solucion);
             renderizarProcedimientoEnKaTeX(solucion);
+            mostrarDatosExtraidos(datos);
+
 
         }
 
