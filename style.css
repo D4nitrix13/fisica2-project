@@ -61,3 +61,21 @@ label {
     margin-right: auto;
     font-family: 'Courier New', monospace;
 }
+
+#resultado,
+#resolucion {
+    overflow-x: auto;
+    max-width: 100%;
+    padding: 15px;
+    background-color: #fff;
+    border-radius: 8px;
+    border: 1px solid #dcdcdc;
+    font-size: 1.05em;
+    line-height: 1.4em;
+    word-wrap: break-word;
+}
+
+.katex-display {
+    overflow-x: auto;
+    display: block;
+}

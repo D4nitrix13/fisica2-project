@@ -2,7 +2,7 @@
 const camposPorEjercicio = {
     1: ['q', 'm', 'vz', 'Bz'],                               // Movimiento circular
     2: ['q', 'm', 't', 'Ex'],                   // Campo E y aceleración lineal
-    3: ['Ex', 'Ey', 'Ez', 'Bx', 'By', 'Bz'],                // Campo E y B perpendiculares
+    3: ['Ex', 'Bz'],  // Campo eléctrico en X y campo magnético en Z
     4: ['q', 'vx', 'vy', 'vz', 'Bx', 'By', 'Bz'],           // Producto vectorial v x B
     5: ['q', 'm', 'vx', 'vy', 'vz', 'Bx', 'By', 'Bz'],      // Movimiento helicoidal
     6: ['q', 'Bx', 'By', 'Bz', 'F'],                        // Calcular velocidad con F conocida
@@ -139,6 +139,10 @@ function resolver() {
                     v = ${v2.toExponential(3)}\\ \\text{m/s}
                 `;
 
+                // F -> Fuerza Magnetica
+                // a -> Aceleración
+                // v -> Velocidad
+
                 steps = `
                     \\textbf{Ejercicio 2 – Campo eléctrico, aceleración lineal} \\\\[1em]
                     \\vec{F} = q \\cdot \\vec{E} = (${q})(${E_mag}) = ${Fe.toExponential(3)}\\ \\text{N} \\\\[1em]
@@ -148,16 +152,60 @@ function resolver() {
                 break;
 
 
-            case 3: // E y B perpendiculares, F total = 0
-                const v_eq = norm(E) / norm(B);
-                result = `v necesaria = ${v_eq.toExponential(3)} m/s`;
+            case 3: // Campo E y B perpendiculares, F total = 0
+                const E3 = norm([Ex, Ey, Ez]); // magnitud del campo eléctrico
+                const B3 = norm([Bx, By, Bz]); // magnitud del campo magnético
+
+                const v_eq = E3 / B3;
+
+                resumenLatex = `
+                    \\textbf{Velocidad para que la fuerza total sea nula:} \\\\[1em]
+                    v = \\frac{E}{B} = \\frac{${E3}}{${B3}} = ${v_eq.toExponential(3)}\\ \\text{m/s}
+                `;
+
+                steps = `
+                    \\textbf{Ejercicio 3 – Campo eléctrico y magnético perpendiculares} \\\\[1em]
+                    \\text{Para que } \\vec{F} = q(\\vec{E} + \\vec{v} \\times \\vec{B}) = 0, \\text{ se debe cumplir:} \\\\
+                    \\vec{v} \\times \\vec{B} = -\\vec{E} \\\\[1em]
+                    \\text{Como } \\vec{E} \\perp \\vec{B}, \\text{ la velocidad es:} \\\\
+                    v = \\frac{E}{B} = \\frac{${E3}}{${B3}} = ${v_eq.toExponential(3)}\\ \\text{m/s}
+                `;
                 break;
 
-            case 4: // v x B
-                const vxB = cross(v, B);
-                const Fv = vxB.map(x => q * x);
-                result = `F = [${Fv.map(x => x.toExponential(3)).join(', ')}] N`;
+
+            case 4: // Producto vectorial completo: F = q (v × B)
+                // Si omites vz, no puedes construir el vector completo.
+                // Si omites Bx o By, el producto vectorial se rompe.
+                // Aunque sean cero, deben estar explícitamente en la fórmula para que el código sea general.
+                const v4 = [vx, vy, vz];
+                const B4 = [Bx, By, Bz];
+                const vxB4 = cross(v4, B4); // producto vectorial
+                const F4 = vxB4.map(x => q * x); // aplicar la carga
+
+                resumenLatex = `
+                    \\textbf{Fuerza magnética vectorial:} \\\\[1em]
+                    \\vec{F} = q(\\vec{v} \\times \\vec{B}) = [
+                    ${F4.map(x => x.toExponential(3)).join(', ')}]~\\text{N}
+                `;
+
+                steps = `
+                    \\textbf{Ejercicio 4 – Producto vectorial completo} \\\\[1em]
+                    \\vec{v} = (${vx}, ${vy}, ${vz}), \\quad
+                    \\vec{B} = (${Bx}, ${By}, ${Bz}) \\\\[1em]
+                    \\vec{v} \\times \\vec{B} =
+                    \\begin{vmatrix}
+                    \\hat{i} & \\hat{j} & \\hat{k} \\\\
+                    ${vx} & ${vy} & ${vz} \\\\
+                    ${Bx} & ${By} & ${Bz}
+                    \\end{vmatrix}
+                    = [
+                    ${vxB4.map(x => x.toExponential(3)).join(', ')}] \\\\[1em]
+                    \\vec{F} = q(\\vec{v} \\times \\vec{B}) = (${q}) \\cdot [
+                    ${vxB4.map(x => x.toExponential(3)).join(', ')}] = [
+                    ${F4.map(x => x.toExponential(3)).join(', ')}]~\\text{N}
+                `;
                 break;
+
 
             case 5: // Movimiento helicoidal
                 const v_par = vz;

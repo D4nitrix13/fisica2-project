@@ -1,37 +1,9 @@
-<form class="calc-form"
-    onsubmit="calcularDatos(event)">
-    <label for="q">Carga del electrón (q) [C]:</label>
-    <input type="number"
-        step="any"
-        id="q"
-        name="q"
-        value="-1.6e-19"
-        required>
-
-    <label for="m">Masa del electrón (m) [kg]:</label>
-    <input type="number"
-        step="any"
-        id="m"
-        name="m"
-        value="9.11e-31"
-        required>
-
-    <label for="v">Velocidad (v) [m/s]:</label>
-    <input type="number"
-        step="any"
-        id="v"
-        name="v"
-        value="3.0e6"
-        required>
-
-    <label for="b">Campo magnético (B) [T]:</label>
-    <input type="number"
-        step="any"
-        id="b"
-        name="b"
-        value="0,01"
-        required>
-
-    <button type="submit">Calcular Movimiento Circular</button>
-    <div id="resultado"></div>
-</form>
+| Campo HTML | Valor     | Descripción                         |
+| ---------- | --------- | ----------------------------------- |
+| `q`        | `1.6e-19` | Carga positiva                      |
+| `vx`       | `4.0e5`   | Componente de velocidad en eje X    |
+| `vy`       | `2.0e5`   | Componente de velocidad en eje Y    |
+| `vz`       | `0`       | No tiene componente en Z            |
+| `Bx`       | `0`       | No hay campo en X                   |
+| `By`       | `0`       | No hay campo en Y                   |
+| `Bz`       | `0.03`    | Componente del campo magnético en Z |
