@@ -133,13 +133,95 @@ async function enviarPrompt(enunciadoUsuario) {
 
                 if (input && label) {
                     input.style.display = 'block';
-                    label.style.display = 'block'; // Mostrar solo el label correcto
+                    label.style.display = 'block';
 
                     input.value = datos[clave];
                     label.textContent = clave.toUpperCase();
                 }
             }
+
+            // ✅ Extraer datos visibles
+            function obtenerValoresVisibles() {
+                const inputsVisibles = document.querySelectorAll('#campos-ocultos input');
+                const datosExtraidos = {};
+
+                inputsVisibles.forEach(input => {
+                    if (input.offsetParent !== null) {
+                        const clave = input.id;
+                        const valor = parseFloat(input.value);
+                        if (!isNaN(valor)) {
+                            datosExtraidos[clave] = valor;
+                        }
+                    }
+                });
+
+                return datosExtraidos;
+            }
+
+            // ✅ Resolver con los datos visibles
+            function resolverEjercicio(datos) {
+                const resultado = { datos }; // 👈 Guardamos también los datos
+
+                if ('q' in datos && 'vx' in datos && 'Bz' in datos) {
+                    resultado.tipo = "Fuerza magnética";
+                    resultado.formula = "F = q * v * B";
+                    resultado.resultado = datos.q * datos.vx * datos.Bz;
+                }
+                else if ('m' in datos && 'vx' in datos && 'q' in datos && 'Bz' in datos) {
+                    resultado.tipo = "Radio del movimiento circular";
+                    resultado.formula = "r = m * v / (q * B)";
+                    resultado.resultado = (datos.m * datos.vx) / (Math.abs(datos.q * datos.Bz));
+                }
+                else if ('q' in datos && 'Ex' in datos) {
+                    resultado.tipo = "Fuerza eléctrica";
+                    resultado.formula = "F = q * E";
+                    resultado.resultado = datos.q * datos.Ex;
+                }
+                else {
+                    resultado.tipo = "Desconocido";
+                    resultado.resultado = null;
+                    resultado.error = "No se encontró fórmula aplicable.";
+                }
+
+                return resultado;
+            }
+
+
+
+            function renderizarProcedimientoEnKaTeX(solucion) {
+                const contenedor = document.getElementById("resultado-container");
+                const katexDiv = document.getElementById("katex-procedimiento");
+                const resultadoDiv = document.getElementById("resultado-final");
+
+                // Mostrar el contenedor de resultados
+                contenedor.style.display = 'block';
+
+                if (solucion.tipo === "Fuerza magnética") {
+                    katex.render(`F = q \\cdot v \\cdot B = (${solucion.datos.q}) \\cdot (${solucion.datos.vx}) \\cdot (${solucion.datos.Bz})`, katexDiv);
+                    resultadoDiv.textContent = `F = ${solucion.resultado.toExponential(3)} N`;
+                }
+                else if (solucion.tipo === "Radio del movimiento circular") {
+                    katex.render(`r = \\frac{m \\cdot v}{|q \\cdot B|} = \\frac{(${solucion.datos.m}) \\cdot (${solucion.datos.vx})}{|(${solucion.datos.q}) \\cdot (${solucion.datos.Bz})|}`, katexDiv);
+                    resultadoDiv.textContent = `r = ${solucion.resultado.toExponential(3)} m`;
+                }
+                else if (solucion.tipo === "Fuerza eléctrica") {
+                    katex.render(`F = q \\cdot E = (${solucion.datos.q}) \\cdot (${solucion.datos.Ex})`, katexDiv);
+                    resultadoDiv.textContent = `F = ${solucion.resultado.toExponential(3)} N`;
+                }
+                else {
+                    katexDiv.textContent = '';
+                    resultadoDiv.textContent = "No se pudo determinar el procedimiento con los datos dados.";
+                }
+            }
+
+            // ✅ Ejecutar
+            const datosVisibles = obtenerValoresVisibles();
+            const solucion = resolverEjercicio(datosVisibles);
+            console.log("🧮 Solución del ejercicio:", solucion);
+            renderizarProcedimientoEnKaTeX(solucion);
+
         }
+
 
 
         mostrarCamposDesdeJSON(datos);
