@@ -3,240 +3,119 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Calculadora Ley de Lorentz</title>
+    <title>Calculadora Fuerza de Lorentz</title>
+    <link rel="stylesheet"
+        href="style.css">
     <link rel="stylesheet"
         href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 40px;
-            background-color: #f9f9f9;
-        }
-
-        h1 {
-            color: #2c3e50;
-        }
-
-        .simbolos {
-            margin-bottom: 20px;
-        }
-
-        .simbolos button {
-            margin: 5px;
-            padding: 10px 18px;
-            font-size: 1.2em;
-            background: #ecf0f1;
-            border: 1px solid #bdc3c7;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .simbolos button:hover {
-            background: #d0e6fa;
-        }
-
-        .equation {
-            margin: 20px 0;
-            font-size: 1.2em;
-            background-color: #ffffff;
-            padding: 15px;
-            border: 1px solid #bdc3c7;
-            border-radius: 5px;
-        }
-
-        .calc-form {
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            border: 1px solid #bdc3c7;
-            max-width: 400px;
-            margin: auto;
-        }
-
-        .calc-form label {
-            display: block;
-            margin-top: 12px;
-        }
-
-        .calc-form input {
-            width: 100%;
-            padding: 8px;
-            margin-top: 4px;
-            margin-bottom: 10px;
-            border: 1px solid #bdc3c7;
-            border-radius: 4px;
-            font-size: 1em;
-        }
-
-        .calc-form button[type="submit"] {
-            background: #2c3e50;
-            color: #fff;
-            border: none;
-            padding: 10px 18px;
-            border-radius: 5px;
-            font-size: 1em;
-            cursor: pointer;
-        }
-
-        .calc-form button[type="submit"]:hover {
-            background: #2980b9;
-        }
-
-        #resultado {
-            margin-top: 15px;
-            font-weight: bold;
-            color: #2980b9;
-        }
-    </style>
 </head>
 
 <body>
-    <h1>Calculadora Ley de Lorentz</h1>
+    <h1 class="titulo">Calculadora Fuerza de Lorentz</h1>
 
-    <div class="simbolos">
-        <button onclick="insertSymbol('q')"><span id="q-latex"></span></button>
-        <button onclick="insertSymbol('E')"><span id="e-latex"></span></button>
-        <button onclick="insertSymbol('v')"><span id="v-latex"></span></button>
-        <button onclick="insertSymbol('B')"><span id="b-latex"></span></button>
-        <button onclick="insertSymbol('θ')"><span id="theta-latex"></span></button>
-        <button onclick="insertSymbol('×')"><span id="cross-latex"></span></button>
-    </div>
+    <div class="form-section">
+        <label for="tipo">Selecciona el tipo de ejercicio:</label>
+        <select id="tipo"
+            class="input-control">
+            <option value="1">1 - Movimiento circular</option>
+            <option value="2">2 - Campo E (aceleración lineal)</option>
+            <option value="3">3 - Campo E y B perpendiculares</option>
+            <option value="4">4 - Producto vectorial completo</option>
+            <option value="5">5 - Movimiento helicoidal</option>
+            <option value="6">6 - Magnitud velocidad (F conocida)</option>
+            <option value="7">7 - Fuerza total vectorial</option>
+        </select>
 
-    <div class="equation">
-        <b>Ecuación de la Ley de Lorentz:</b>
-        <div id="lorentz-eq"></div>
-    </div>
-
-    <form class="calc-form"
-        onsubmit="calcularDatos(event)">
-        <label for="q">Carga del electrón (q) [C]:</label>
+        <label><span id="q-label"></span> (Carga en coulombs)</label>
         <input type="number"
-            step="any"
             id="q"
-            name="q"
-            value="-1.6e-19"
-            required>
-
-        <label for="m">Masa del electrón (m) [kg]:</label>
-        <input type="number"
             step="any"
+            class="input-control">
+
+        <label><span id="m-label"></span> (Masa en kilogramos)</label>
+        <input type="number"
             id="m"
-            name="m"
-            value="9.11e-31"
-            required>
-
-        <label for="v">Velocidad (v) [m/s]:</label>
-        <input type="number"
             step="any"
-            id="v"
-            name="v"
-            value="3.0e6"
-            required>
+            class="input-control">
 
-        <label for="b">Campo magnético (B) [T]:</label>
+        <label><span id="vx-label"></span> (Velocidad en eje X en m/s)</label>
         <input type="number"
+            id="vx"
             step="any"
-            id="b"
-            name="b"
-            value="0,01"
-            required>
+            class="input-control">
 
-        <button type="submit">Calcular Movimiento Circular</button>
-        <div id="resultado"></div>
-    </form>
+        <label><span id="vy-label"></span> (Velocidad en eje Y en m/s)</label>
+        <input type="number"
+            id="vy"
+            step="any"
+            class="input-control">
 
-    <script>
-        // Renderizar símbolos con KaTeX
-        function renderLatex(id, latex) {
-            katex.render(latex, document.getElementById(id), {
-                throwOnError: false
-            });
-        }
+        <label><span id="vz-label"></span> (Velocidad en eje Z en m/s)</label>
+        <input type="number"
+            id="vz"
+            step="any"
+            class="input-control">
 
-        renderLatex('q-latex', 'q');
-        renderLatex('e-latex', '\\vec{E}');
-        renderLatex('v-latex', '\\vec{v}');
-        renderLatex('b-latex', '\\vec{B}');
-        renderLatex('theta-latex', '\\theta');
-        renderLatex('cross-latex', '\\times');
-        renderLatex('lorentz-eq', '\\vec{F} = q(\\vec{E} + \\vec{v} \\times \\vec{B})');
-        renderLatex('q2-latex', 'q');
-        renderLatex('e2-latex', '\\vec{E}');
-        renderLatex('v2-latex', '\\vec{v}');
-        renderLatex('b2-latex', '\\vec{B}');
-        renderLatex('theta2-latex', '\\theta');
+        <label><span id="Ex-label"></span> (Campo eléctrico X en V/m)</label>
+        <input type="number"
+            id="Ex"
+            step="any"
+            class="input-control">
 
-        // Insertar símbolo en el campo activo
-        let lastActive = null;
-        document.querySelectorAll('.calc-form input').forEach(inp => {
-            inp.addEventListener('focus', function () {
-                lastActive = this;
-            });
-        });
+        <label><span id="Ey-label"></span> (Campo eléctrico Y en V/m)</label>
+        <input type="number"
+            id="Ey"
+            step="any"
+            class="input-control">
 
-        function insertSymbol(symbol) {
-            if (lastActive) {
-                let start = lastActive.selectionStart;
-                let end = lastActive.selectionEnd;
-                let value = lastActive.value;
-                lastActive.value = value.substring(0, start) + symbol + value.substring(end);
-                lastActive.focus();
-                lastActive.selectionStart = lastActive.selectionEnd = start + symbol.length;
-            }
-        }
+        <label><span id="Ez-label"></span> (Campo eléctrico Z en V/m)</label>
+        <input type="number"
+            id="Ez"
+            step="any"
+            class="input-control">
 
-        function calcularDatos(e) {
-            e.preventDefault();
-            let q = Math.abs(parseFloat(document.getElementById('q').value)); // valor absoluto
-            let m = parseFloat(document.getElementById('m').value);
-            let v = parseFloat(document.getElementById('v').value);
-            let B = parseFloat(document.getElementById('b').value.replace(",", "."));
+        <label><span id="Bx-label"></span> (Campo magnético X en tesla)</label>
+        <input type="number"
+            id="Bx"
+            step="any"
+            class="input-control">
 
-            // Cálculo de la fuerza magnética
-            let F = q * v * B;
+        <label><span id="By-label"></span> (Campo magnético Y en tesla)</label>
+        <input type="number"
+            id="By"
+            step="any"
+            class="input-control">
 
-            // Cálculo del radio de la trayectoria
-            let r = (m * v) / (q * B);
+        <label><span id="Bz-label"></span> (Campo magnético Z en tesla)</label>
+        <input type="number"
+            id="Bz"
+            step="any"
+            class="input-control">
 
-            // Cálculo del período
-            let T = (2 * Math.PI * m) / (q * B);
+        <label><span id="t-label"></span> (Tiempo en segundos)</label>
+        <input type="number"
+            id="t"
+            step="any"
+            class="input-control">
 
-            // Mostrar resultados
-            let resultado = `
-            \\textbf{Resultados del movimiento circular:} \\\\
-            F = |q| \\cdot v \\cdot B = (${q})(${v})(${B}) = ${F.toExponential(4)}~\\text{N} \\\\[1em]
-            r = \\frac{m \\cdot v}{|q| \\cdot B} = \\frac{${m} \\cdot ${v}}{${q} \\cdot ${B}} = ${r.toExponential(4)}~\\text{m} \\\\[1em]
-            T = \\frac{2\\pi \\cdot m}{|q| \\cdot B} = \\frac{2\\pi \\cdot ${m}}{${q} \\cdot ${B}} = ${T.toExponential(4)}~\\text{s}
-        `;
+        <label><span id="F-label"></span> (Magnitud de la fuerza en newtons)</label>
+        <input type="number"
+            id="F"
+            step="any"
+            class="input-control">
 
-            // Mostrar solo resumen corto
-            document.getElementById('resultado').textContent = `F = ${F.toExponential(4)} N | r = ${r.toExponential(4)} m | T = ${T.toExponential(4)} s`;
 
-            // Mostrar resolución en KaTeX
-            let resolDiv = document.getElementById('resolucion');
-            if (!resolDiv) {
-                resolDiv = document.createElement('div');
-                resolDiv.id = 'resolucion';
-                resolDiv.style.marginTop = '30px';
-                resolDiv.style.background = '#fff';
-                resolDiv.style.padding = '20px';
-                resolDiv.style.borderRadius = '8px';
-                resolDiv.style.border = '1px solid #bdc3c7';
-                resolDiv.style.maxWidth = '600px';
-                resolDiv.style.marginLeft = 'auto';
-                resolDiv.style.marginRight = 'auto';
-                document.body.appendChild(resolDiv);
-            }
-            resolDiv.innerHTML = '';
-            katex.render(resultado, resolDiv, {
-                throwOnError: false,
-                displayMode: true
-            });
-        }
-    </script>
+        <button onclick="resolver()"
+            class="btn-calcular">Calcular</button>
+    </div>
 
+    <div id="resultado"
+        class="output"></div>
+    <div id="resolucion"
+        class="output"></div>
+
+    <script src="app.js"></script>
 </body>
 
 </html>
