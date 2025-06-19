@@ -12,11 +12,37 @@
 </head>
 
 <body>
+    <nav class="navbar"
+        style="background: linear-gradient(90deg, #1e3c72 0%, #2a5298 100%); padding: 0.5rem 0; box-shadow: 0 2px 8px rgba(30,60,114,0.08);">
+        <ul style="display: flex; justify-content: center; gap: 2rem; margin: 0; padding: 0; list-style: none;">
+            <li>
+                <a href="index.html"
+                    style="color: #fff; font-weight: 600; text-decoration: none; font-size: 1.1rem; padding: 0.5rem 1.2rem; border-radius: 6px; transition: background 0.2s;">
+                    Inicio
+                </a>
+            </li>
+            <li>
+                <a href="enunciado.html"
+                    style="color: #fff; font-weight: 600; text-decoration: none; font-size: 1.1rem; padding: 0.5rem 1.2rem; border-radius: 6px; transition: background 0.2s;">
+                    Enunciado
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <script>
+        // Navbar hover effect
+        document.querySelectorAll('.navbar a').forEach(a => {
+            a.addEventListener('mouseenter', () => {
+                a.style.background = 'rgba(255,255,255,0.15)';
+            });
+            a.addEventListener('mouseleave', () => {
+                a.style.background = 'none';
+            });
+        });
+    </script>
     <h1 class="titulo">Calculadora Fuerza de Lorentz</h1>
     <div id="enunciado"
         class="enunciado"></div>
-
-
 
     <div class="form-section">
         <label for="tipo">Selecciona el tipo de ejercicio:</label>

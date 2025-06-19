@@ -2,9 +2,30 @@
 
 ollama run llama3.3
 
-Fuerza de lorentz sobre una carga puntual
+Fuerza de lorentz sobre una carga puntual|
 
-Perfecto. A continuación te presento **la simbología más común** utilizada en el tema de la **Ley de Lorentz aplicada sobre una carga** en Física 2:
+---
+
+| Tipo              | Componentes     | Cantidad |
+| ----------------- | --------------- | -------- |
+| Campo eléctrico   | $E_x, E_y, E_z$ | 3        |
+| Campo magnético   | $B_x, B_y, B_z$ | 3        |
+| Velocidad         | $v_x, v_y, v_z$ | 3        |
+| Carga             | $q$             | 1        |
+| Masa              | $m$             | 1        |
+| Tiempo            | $t$             | 1        |
+| Fuerza (opcional) | $F$             | 1        |
+
+---
+
+| Categoría           | Campos incluidos |
+| ------------------- | ---------------- |
+| **Carga y masa**    | `q`, `m`         |
+| **Velocidad**       | `vx`, `vy`, `vz` |
+| **Campo eléctrico** | `Ex`, `Ey`, `Ez` |
+| **Campo magnético** | `Bx`, `By`, `Bz` |
+| **Tiempo**          | `t`              |
+| **Fuerza conocida** | `F`              |
 
 ---
 

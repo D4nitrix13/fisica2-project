@@ -88,3 +88,16 @@ label {
     background-color: #f8f9fa;
     font-size: 1rem;
 }
+
+textarea.input-control.no-scroll-x {
+    width: 100%;
+    padding: 0.5rem;
+    font-size: 1rem;
+    margin-top: 0.3rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    resize: vertical;
+    overflow-x: hidden;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}

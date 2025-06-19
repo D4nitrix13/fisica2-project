@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Formulario de Campos — Fuerza de Lorentz</title>
+    <link rel="stylesheet"
+        href="style.css">
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+</head>
+
+<body>
+
+    <h2 style="text-align: center;">Todos los Campos — Fuerza de Lorentz</h2>
+
+    <form class="form-section">
+
+        <!-- ENUNCIADO MANUAL -->
+        <label for="enunciado-manual">Escribe el enunciado del ejercicio:</label>
+
+        <textarea id="enunciado-manual"
+            rows="5"
+            placeholder="Ejemplo: Una partícula con carga -1.6×10⁻¹⁹ C se mueve con velocidad v = 3×10⁵ m/s perpendicular a un campo magnético B = 0.02 T. Calcula la fuerza magnética que actúa sobre ella."
+            class="input-control no-scroll-x"></textarea>
+
+
+        <!-- CARGA -->
+        <label><span id="q-label"></span> (Carga eléctrica en C)</label>
+        <input type="number"
+            id="q"
+            step="any"
+            class="input-control">
+
+        <!-- MASA -->
+        <label><span id="m-label"></span> (Masa en kg)</label>
+        <input type="number"
+            id="m"
+            step="any"
+            class="input-control">
+
+        <!-- VELOCIDAD -->
+        <label><span id="vx-label"></span> (Velocidad en X en m/s)</label>
+        <input type="number"
+            id="vx"
+            step="any"
+            class="input-control">
+
+        <label><span id="vy-label"></span> (Velocidad en Y en m/s)</label>
+        <input type="number"
+            id="vy"
+            step="any"
+            class="input-control">
+
+        <label><span id="vz-label"></span> (Velocidad en Z en m/s)</label>
+        <input type="number"
+            id="vz"
+            step="any"
+            class="input-control">
+
+        <!-- CAMPO ELÉCTRICO -->
+        <label><span id="Ex-label"></span> (Campo eléctrico X en V/m)</label>
+        <input type="number"
+            id="Ex"
+            step="any"
+            class="input-control">
+
+        <label><span id="Ey-label"></span> (Campo eléctrico Y en V/m)</label>
+        <input type="number"
+            id="Ey"
+            step="any"
+            class="input-control">
+
+        <label><span id="Ez-label"></span> (Campo eléctrico Z en V/m)</label>
+        <input type="number"
+            id="Ez"
+            step="any"
+            class="input-control">
+
+        <!-- CAMPO MAGNÉTICO -->
+        <label><span id="Bx-label"></span> (Campo magnético X en T)</label>
+        <input type="number"
+            id="Bx"
+            step="any"
+            class="input-control">
+
+        <label><span id="By-label"></span> (Campo magnético Y en T)</label>
+        <input type="number"
+            id="By"
+            step="any"
+            class="input-control">
+
+        <label><span id="Bz-label"></span> (Campo magnético Z en T)</label>
+        <input type="number"
+            id="Bz"
+            step="any"
+            class="input-control">
+
+        <!-- TIEMPO -->
+        <label><span id="t-label"></span> (Tiempo en segundos)</label>
+        <input type="number"
+            id="t"
+            step="any"
+            class="input-control">
+
+        <!-- FUERZA (cuando se conoce) -->
+        <label><span id="F-label"></span> (Fuerza en newtons)</label>
+        <input type="number"
+            id="F"
+            step="any"
+            class="input-control">
+
+        <!-- BOTÓN -->
+        <button type="submit"
+            class="btn-calcular">Enviar</button>
+    </form>
+
+    <!-- KaTeX para simbología -->
+    <script src="main.js"></script>
+
+</body>
+
+</html>
