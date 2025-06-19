@@ -45,8 +45,8 @@ const valoresPorEjercicio = {
     6: { q: "1.6e-19", Bx: "0", By: "0", Bz: "0.04", F: "6.4e-15" },
 
     7: {
-        q: "-1.6e-19", 
-        vx: "0", vy: "0", vz: "3e5", Ex: "5e3", 
+        q: "-1.6e-19",
+        vx: "0", vy: "0", vz: "3e5", Ex: "5e3",
         Ey: "0", Ez: "0", Bx: "0", By: "0.01", Bz: "0"
     }
 };
@@ -118,27 +118,6 @@ renderEnunciado(1); // Mostrar ejercicio 1 al inicio
 // --------------------------------------------------------------------------------------------------------------------------------------
 
 
-function actualizarVisibilidadCampos() {
-    const tipo = document.getElementById('tipo').value;
-    const camposVisibles = camposPorEjercicio[tipo] || [];
-    const todos = ['q', 'm', 'vx', 'vy', 'vz', 'Ex', 'Ey', 'Ez', 'Bx', 'By', 'Bz', 't', 'F'];
-
-    todos.forEach(id => {
-        const input = document.getElementById(id);
-        const label = document.querySelector(`label[for="${id}"]`) || input?.previousElementSibling;
-
-        const visible = camposVisibles.includes(id);
-
-        if (input && label) {
-            input.style.display = visible ? 'block' : 'none';
-            label.style.display = visible ? 'block' : 'none';
-            input.disabled = !visible;
-            input.value = visible && valoresPorEjercicio[tipo]?.[id] ? valoresPorEjercicio[tipo][id] : '';
-        }
-    });
-
-
-}
 
 document.getElementById('tipo').addEventListener('change', actualizarVisibilidadCampos);
 window.addEventListener('DOMContentLoaded', actualizarVisibilidadCampos);
