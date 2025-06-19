@@ -166,10 +166,12 @@ async function enviarPrompt(enunciadoUsuario) {
                 const v = [datos.vx ?? 0, datos.vy ?? 0, datos.vz ?? 0];
                 const B = [datos.Bx ?? 0, datos.By ?? 0, datos.Bz ?? 0];
                 const E = [datos.Ex ?? 0, datos.Ey ?? 0, datos.Ez ?? 0];
+                const F = datos.F ?? null;
 
                 const tieneCampoE = E.some(e => e !== 0);
                 const tieneCampoB = B.some(b => b !== 0);
                 const tieneVelocidad = v.some(vv => vv !== 0);
+                const tieneFuerza = typeof F === 'number' && !isNaN(F);
 
                 // Funciones auxiliares
                 const cross = (a, b) => [
@@ -177,10 +179,21 @@ async function enviarPrompt(enunciadoUsuario) {
                     a[2] * b[0] - a[0] * b[2],
                     a[0] * b[1] - a[1] * b[0]
                 ];
-
                 const norm = v => Math.sqrt(v.reduce((acc, x) => acc + x * x, 0));
 
-                // === Fuerza total: q(E + v x B)
+                // === 🧮 Calcular B a partir de F, q, v
+                if (tieneFuerza && q !== 0 && tieneVelocidad && !tieneCampoB) {
+                    const v_mag = norm(v);
+                    const B_resultado = F / (Math.abs(q) * v_mag);
+
+                    resultado.tipo = "Campo magnético a partir de F";
+                    resultado.formula = "B = \\frac{F}{|q| \\cdot v}";
+                    resultado.magnitud = B_resultado;
+                    resultado.resultado = `B = \\frac{${F}}{|${q}| \\cdot ${v_mag.toExponential(2)}} = ${B_resultado.toExponential(2)}~\\text{T}`;
+                    return resultado;
+                }
+
+                // === Fuerza total
                 if (q !== 0 && tieneVelocidad && tieneCampoB && tieneCampoE) {
                     const vxB = cross(v, B);
                     const F_total = E.map((e, i) => q * (e + vxB[i]));
@@ -188,26 +201,25 @@ async function enviarPrompt(enunciadoUsuario) {
                     resultado.tipo = "Fuerza total vectorial";
                     resultado.formula = "𝐅 = q (𝐄 + 𝐯 × 𝐁)";
                     resultado.vector = F_total;
-                    resultado.resultado = `\\vec{F} = q(\\vec{E} + \\vec{v} \\times \\vec{B}) = ${JSON.stringify(F_total.map(n => n.toExponential(2)))}~\\text{N}`;
+                    resultado.resultado = `\\vec{F} = ${JSON.stringify(F_total.map(n => n.toExponential(2)))}~\\text{N}`;
                     return resultado;
                 }
 
-                // === Fuerza magnética pura (vectorial y escalar)
+                // === Fuerza magnética pura
                 if (q !== 0 && tieneVelocidad && tieneCampoB && !tieneCampoE) {
-                    const vxB = cross(v, B); // vector
+                    const vxB = cross(v, B);
                     const Fm = vxB.map(component => q * component);
                     const v_mag = norm(v);
                     const B_mag = norm(B);
-                    const F_magnitud = Math.abs(q) * v_mag * B_mag; // escalar
+                    const F_magnitud = Math.abs(q) * v_mag * B_mag;
 
                     resultado.tipo = "Fuerza magnética";
                     resultado.formula = "F = qvB\\sin\\theta,\\quad \\vec{F} = q(\\vec{v} \\times \\vec{B})";
                     resultado.vector = Fm;
                     resultado.magnitud = F_magnitud;
-                    resultado.resultado = `F = (${q})(${v_mag.toExponential(2)})(${B_mag.toExponential(2)}) = ${(F_magnitud).toExponential(2)}~\\text{N}`;
+                    resultado.resultado = `F = (${q})(${v_mag.toExponential(2)})(${B_mag.toExponential(2)}) = ${F_magnitud.toExponential(2)}~\\text{N}`;
                     return resultado;
                 }
-
 
                 // === Fuerza eléctrica pura
                 if (q !== 0 && tieneCampoE && !tieneCampoB && !tieneVelocidad) {
@@ -227,15 +239,17 @@ async function enviarPrompt(enunciadoUsuario) {
                     const r = (m * v_mag) / (Math.abs(q) * B_mag);
 
                     resultado.tipo = "Radio de trayectoria circular";
-                    resultado.formula = "r = mv / (|q|B)";
+                    resultado.formula = "r = \\frac{mv}{|q|B}";
                     resultado.resultado = `r = \\frac{(${m})(${v_mag})}{|${q}|(${B_mag})} = ${r.toExponential(3)}~\\text{m}`;
                     return resultado;
                 }
 
+                // === Caso desconocido
                 resultado.tipo = "Desconocido";
                 resultado.resultado = "No se pudo determinar el procedimiento con los datos dados.";
                 return resultado;
             }
+
 
 
 
@@ -244,45 +258,64 @@ async function enviarPrompt(enunciadoUsuario) {
                 const katexDiv = document.getElementById("katex-procedimiento");
                 const resultadoDiv = document.getElementById("resultado-final");
 
-                // Mostrar el contenedor de resultados
                 contenedor.style.display = 'block';
 
-                if (solucion.tipo === "Fuerza magnética") {
-                    const q = solucion.datos.q ?? 0;
-                    const v = [solucion.datos.vx ?? 0, solucion.datos.vy ?? 0, solucion.datos.vz ?? 0];
-                    const B = [solucion.datos.Bx ?? 0, solucion.datos.By ?? 0, solucion.datos.Bz ?? 0];
-                    const v_mag = Math.sqrt(v[0] ** 2 + v[1] ** 2 + v[2] ** 2);
-                    const B_mag = Math.sqrt(B[0] ** 2 + B[1] ** 2 + B[2] ** 2);
+                const q = solucion.datos.q ?? 0;
+                const m = solucion.datos.m ?? 0;
+                const F = solucion.datos.F ?? 0;
+                const v = [solucion.datos.vx ?? 0, solucion.datos.vy ?? 0, solucion.datos.vz ?? 0];
+                const B = [solucion.datos.Bx ?? 0, solucion.datos.By ?? 0, solucion.datos.Bz ?? 0];
+                const E = [solucion.datos.Ex ?? 0, solucion.datos.Ey ?? 0, solucion.datos.Ez ?? 0];
 
+                const v_mag = Math.sqrt(v[0] ** 2 + v[1] ** 2 + v[2] ** 2);
+                const B_mag = Math.sqrt(B[0] ** 2 + B[1] ** 2 + B[2] ** 2);
+
+                // === Caso: Fuerza magnética
+                if (solucion.tipo === "Fuerza magnética") {
                     katex.render(
                         `F = q \\cdot v \\cdot B \\cdot \\sin\\theta = (${q}) \\cdot (${v_mag.toExponential(2)}) \\cdot (${B_mag.toExponential(2)}) \\cdot (1)`,
                         katexDiv
                     );
-                    const original = 1.6e-13;
-                    const corregido = original - 1e-14;
-                    const resultadoCorregido = (solucion.magnitud + 1.440e-13).toExponential(3);
-                    resultadoDiv.textContent = `F = ${resultadoCorregido} N`;
-
+                    resultadoDiv.textContent = `F = ${solucion.magnitud.toExponential(3)} N`;
                 }
 
-                else if (solucion.tipo === "Radio del movimiento circular") {
-                    katex.render(`r = \\frac{m \\cdot v}{|q \\cdot B|} = \\frac{(${solucion.datos.m}) \\cdot (${solucion.datos.vx ?? 0})}{|(${solucion.datos.q}) \\cdot (${solucion.datos.Bz})|}`, katexDiv);
-                    resultadoDiv.textContent = `r = ${solucion.resultado.toExponential(3)} m`;
+                // === Caso: Campo magnético (desde F)
+                else if (solucion.tipo === "Campo magnético (a partir de F)" || solucion.tipo === "Campo magnético a partir de F") {
+                    katex.render(
+                        `B = \\frac{F}{|q| \\cdot v} = \\frac{${F}}{|${q}| \\cdot (${v_mag.toExponential(2)})}`,
+                        katexDiv
+                    );
+                    resultadoDiv.textContent = `B = ${solucion.magnitud.toExponential(3)} T`;
                 }
+
+                // === Caso: Radio de trayectoria circular
+                else if (solucion.tipo === "Radio de trayectoria circular") {
+                    katex.render(
+                        `r = \\frac{m \\cdot v}{|q| \\cdot B} = \\frac{(${m}) \\cdot (${v_mag.toExponential(2)})}{|${q}| \\cdot (${B_mag.toExponential(2)})}`,
+                        katexDiv
+                    );
+                    const r_value = parseFloat(solucion.resultado.match(/\d+\.\d+e[+-]?\d+/)?.[0] ?? "0");
+                    resultadoDiv.textContent = `r = ${r_value.toExponential(3)} m`;
+                }
+
+                // === Caso: Fuerza eléctrica
                 else if (solucion.tipo === "Fuerza eléctrica") {
-                    katex.render(`F = q \\cdot E = (${solucion.datos.q}) \\cdot (${solucion.datos.Ex})`, katexDiv);
-                    if (typeof solucion.resultado === 'number') {
-                        resultadoDiv.textContent = `F = ${solucion.resultado.toExponential(3)} N`;
-                    } else if (typeof solucion.resultado === 'string') {
-                        katex.render(solucion.resultado, resultadoDiv);
-                    }
-
+                    katex.render(
+                        `F = q \\cdot E = (${q}) \\cdot (${solucion.datos.Ex ?? 0})`,
+                        katexDiv
+                    );
+                    const f_value = parseFloat(solucion.resultado.match(/\d+\.\d+e[+-]?\d+/)?.[0] ?? "0");
+                    resultadoDiv.textContent = `F = ${f_value.toExponential(3)} N`;
                 }
+
+                // === Caso genérico no resuelto
                 else {
                     katexDiv.textContent = '';
                     resultadoDiv.textContent = "No se pudo determinar el procedimiento con los datos dados.";
                 }
             }
+
+
 
             function mostrarDatosExtraidos(datos) {
                 const definiciones = {
