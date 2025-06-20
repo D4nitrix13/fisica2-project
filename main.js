@@ -181,6 +181,32 @@ async function enviarPrompt(enunciadoUsuario) {
                 ];
                 const norm = v => Math.sqrt(v.reduce((acc, x) => acc + x * x, 0));
 
+                // === Energía cinética
+                if (m !== 0 && tieneVelocidad && !tieneCampoB && !tieneCampoE && !tieneFuerza) {
+                    const v_mag = norm(v);
+                    const Ek = 0.5 * m * v_mag ** 2;
+
+                    resultado.tipo = "Energía cinética";
+                    resultado.formula = "E_k = \\frac{1}{2}mv^2";
+                    resultado.magnitud = Ek;
+                    resultado.resultado = `E_k = \\frac{1}{2}(${m})(${v_mag.toExponential(2)})^2 = ${Ek.toExponential(2)}~\\text{J}`;
+                    return resultado;
+                }
+
+
+                // === Período de revolución
+                if (q !== 0 && m !== 0 && tieneCampoB && !tieneCampoE && !tieneVelocidad && !tieneFuerza) {
+                    const B_mag = norm(B);
+                    const T = (2 * Math.PI * m) / (Math.abs(q) * B_mag);
+
+                    resultado.tipo = "Período de revolución";
+                    resultado.formula = "T = \\frac{2\\pi m}{|q|B}";
+                    resultado.resultado = `T = \\frac{2\\pi(${m})}{|${q}|(${B_mag.toExponential(2)})} = ${T.toExponential(3)}~\\text{s}`;
+                    resultado.magnitud = T;
+                    return resultado;
+                }
+
+
                 // === 🧮 Calcular B a partir de F, q, v
                 if (tieneFuerza && q !== 0 && tieneVelocidad && !tieneCampoB) {
                     const v_mag = norm(v);
@@ -205,6 +231,19 @@ async function enviarPrompt(enunciadoUsuario) {
                     resultado.vector = F_total;
                     resultado.magnitud = F_magnitud;
                     resultado.resultado = `\\vec{F} = q(\\vec{E} + \\vec{v} \\times \\vec{B}) = ${JSON.stringify(F_total.map(n => n.toExponential(2)))}~\\text{N}`;
+                    return resultado;
+                }
+
+                // === Radio del movimiento circular
+                if (q !== 0 && m !== 0 && tieneVelocidad && tieneCampoB && !tieneCampoE) {
+                    const v_mag = norm(v);
+                    const B_mag = norm(B);
+                    const r = (m * v_mag) / (Math.abs(q) * B_mag);
+
+                    resultado.tipo = "Radio de trayectoria circular";
+                    resultado.formula = "r = \\frac{mv}{|q|B}";
+                    resultado.magnitud = r; // ✅ AGREGA ESTA LÍNEA
+                    resultado.resultado = `r = \\frac{(${m})(${v_mag})}{|${q}|(${B_mag})} = ${r.toExponential(3)}~\\text{m}`;
                     return resultado;
                 }
 
@@ -236,17 +275,7 @@ async function enviarPrompt(enunciadoUsuario) {
                     return resultado;
                 }
 
-                // === Radio del movimiento circular
-                if (q !== 0 && m !== 0 && tieneVelocidad && tieneCampoB && !tieneCampoE) {
-                    const v_mag = norm(v);
-                    const B_mag = norm(B);
-                    const r = (m * v_mag) / (Math.abs(q) * B_mag);
 
-                    resultado.tipo = "Radio de trayectoria circular";
-                    resultado.formula = "r = \\frac{mv}{|q|B}";
-                    resultado.resultado = `r = \\frac{(${m})(${v_mag})}{|${q}|(${B_mag})} = ${r.toExponential(3)}~\\text{m}`;
-                    return resultado;
-                }
 
                 // === Caso desconocido
                 resultado.tipo = "Desconocido";
@@ -274,6 +303,7 @@ async function enviarPrompt(enunciadoUsuario) {
                 const v_mag = Math.sqrt(v[0] ** 2 + v[1] ** 2 + v[2] ** 2);
                 const B_mag = Math.sqrt(B[0] ** 2 + B[1] ** 2 + B[2] ** 2);
 
+
                 // === Caso: Fuerza magnética
                 if (solucion.tipo === "Fuerza magnética") {
                     katex.render(
@@ -282,6 +312,28 @@ async function enviarPrompt(enunciadoUsuario) {
                     );
                     resultadoDiv.textContent = `F = ${solucion.magnitud.toExponential(3)} N`;
                 }
+
+                // === Caso: Energía cinética
+                else if (solucion.tipo === "Energía cinética") {
+                    const v_mag = Math.sqrt(v[0] ** 2 + v[1] ** 2 + v[2] ** 2);
+                    katex.render(
+                        `E_k = \\frac{1}{2}mv^2 = \\frac{1}{2}(${m})(${v_mag.toExponential(2)})^2`,
+                        katexDiv
+                    );
+                    resultadoDiv.textContent = `E_k = ${solucion.magnitud.toExponential(3)} J`;
+                }
+
+
+                // === Caso: Período de revolución
+                else if (solucion.tipo === "Período de revolución") {
+                    katex.render(
+                        `T = \\frac{2\\pi m}{|q| B} = \\frac{2\\pi (${m})}{|${q}| (${B_mag.toExponential(2)})}`,
+                        katexDiv
+                    );
+                    resultadoDiv.textContent = `T = ${solucion.magnitud.toExponential(3)} s`;
+                }
+
+
                 // === Caso: Fuerza total vectorial (eléctrica + magnética)
                 else if (solucion.tipo === "Fuerza total vectorial") {
                     // E + v x B
@@ -323,8 +375,8 @@ async function enviarPrompt(enunciadoUsuario) {
                         `r = \\frac{m \\cdot v}{|q| \\cdot B} = \\frac{(${m}) \\cdot (${v_mag.toExponential(2)})}{|${q}| \\cdot (${B_mag.toExponential(2)})}`,
                         katexDiv
                     );
-                    const r_value = parseFloat(solucion.resultado.match(/\d+\.\d+e[+-]?\d+/)?.[0] ?? "0");
-                    resultadoDiv.textContent = `r = ${r_value.toExponential(3)} m`;
+                    resultadoDiv.textContent = `r = ${solucion.magnitud.toExponential(3)} m`;
+
                 }
 
                 // === Caso: Fuerza eléctrica
