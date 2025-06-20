@@ -276,6 +276,32 @@ async function enviarPrompt(enunciadoUsuario) {
                 }
 
 
+                // ultimos casos
+
+                // === Radio por equilibrio de fuerzas centrípetas y magnéticas
+                if (q !== 0 && m !== 0 && tieneVelocidad && tieneCampoB && !tieneCampoE) {
+                    const v_mag = norm(v);
+                    const B_mag = norm(B);
+                    const r = (m * v_mag) / (Math.abs(q) * B_mag);
+
+                    resultado.tipo = "Radio por equilibrio de fuerzas";
+                    resultado.formula = "r = \\frac{mv}{|q|B}";
+                    resultado.resultado = `r = \\frac{(${m})(${v_mag})}{|${q}|(${B_mag})} = ${r.toExponential(3)}~\\text{m}`;
+                    return resultado;
+                }
+
+
+                // === Frecuencia de revolución
+                if (q !== 0 && m !== 0 && tieneCampoB && !tieneVelocidad && !tieneCampoE && datos.calcularFrecuencia) {
+                    const B_mag = norm(B);
+                    const f = (Math.abs(q) * B_mag) / (2 * Math.PI * m);
+
+                    resultado.tipo = "Frecuencia de revolución";
+                    resultado.formula = "f = \\frac{|q|B}{2\\pi m}";
+                    resultado.resultado = `f = \\frac{(${Math.abs(q)})(${B_mag})}{2\\pi(${m})} = ${f.toExponential(3)}~\\text{Hz}`;
+                    return resultado;
+                }
+
 
                 // === Caso desconocido
                 resultado.tipo = "Desconocido";
@@ -388,6 +414,36 @@ async function enviarPrompt(enunciadoUsuario) {
                     const f_value = parseFloat(solucion.resultado.match(/\d+\.\d+e[+-]?\d+/)?.[0] ?? "0");
                     resultadoDiv.textContent = `F = ${f_value.toExponential(3)} N`;
                 }
+
+                // === Radio por equilibrio de fuerzas centrípetas y magnéticas
+                else if (solucion.tipo === "Radio por equilibrio de fuerzas") {
+                    katex.render(
+                        `r = \\frac{m \\cdot v}{|q| \\cdot B} = \\frac{(${m})(${v_mag.toExponential(2)})}{|${q}| \\cdot (${B_mag.toExponential(2)})}`,
+                        katexDiv
+                    );
+                    resultadoDiv.textContent = `r = ${parseFloat(solucion.resultado.match(/\d+\.\d+e[+-]?\d+/)?.[0] ?? "0").toExponential(3)} m`;
+                }
+
+                // === Período de revolución
+                else if (solucion.tipo === "Periodo de revolución") {
+                    katex.render(
+                        `T = \\frac{2\\pi m}{|q| B} = \\frac{2\\pi (${m})}{|${q}|(${B_mag.toExponential(2)})}`,
+                        katexDiv
+                    );
+                    const T = parseFloat(solucion.resultado.match(/\d+\.\d+e[+-]?\d+/)?.[0] ?? "0");
+                    resultadoDiv.textContent = `T = ${T.toExponential(3)} s`;
+                }
+
+                // === Frecuencia de revolución
+                else if (solucion.tipo === "Frecuencia de revolución") {
+                    katex.render(
+                        `f = \\frac{|q| B}{2\\pi m} = \\frac{(${Math.abs(q)})(${B_mag.toExponential(2)})}{2\\pi (${m})}`,
+                        katexDiv
+                    );
+                    const f = parseFloat(solucion.resultado.match(/\d+\.\d+e[+-]?\d+/)?.[0] ?? "0");
+                    resultadoDiv.textContent = `f = ${f.toExponential(3)} Hz`;
+                }
+
 
                 // === Caso genérico no resuelto
                 else {
